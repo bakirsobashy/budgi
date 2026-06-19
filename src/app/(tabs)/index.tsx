@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { useFinanceStore } from "../store/useFinanceStore";
+import { useFinanceStore } from "../../store/useFinanceStore";
 
 export default function Index() {
   const categories = useFinanceStore((s) => s.categories);
