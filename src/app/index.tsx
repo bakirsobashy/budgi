@@ -1,9 +1,23 @@
+import { useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { useFinanceStore } from "../store/useFinanceStore";
 
 export default function Index() {
+  const categories = useFinanceStore((s) => s.categories);
+  const isHydrated = useFinanceStore((s) => s.isHydrated);
+
+  useEffect(() => {
+    if (isHydrated) {
+      console.log("Dashboard categories:", categories);
+    }
+  }, [isHydrated, categories]);
+
   return (
     <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
+      <Text>Dashboard categories:</Text>
+      {categories.map((category) => (
+        <Text key={category.id}>{category.name}</Text>
+      ))}
     </View>
   );
 }

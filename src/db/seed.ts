@@ -20,4 +20,5 @@ export async function seedCategories() {
   if (total === 0) {
     await db.insert(categories).values(DEFAULT_CATEGORIES);
   }
+  console.log("Categories seeded successfully");
 }

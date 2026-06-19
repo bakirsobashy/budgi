@@ -3,5 +3,6 @@ import { openDatabaseSync } from "expo-sqlite";
 import * as schema from "./schema";
 
 const expoDb = openDatabaseSync("finance.db");
+console.log("Client initialized successfully");
 
 export const db = drizzle(expoDb, { schema });

@@ -1,0 +1,144 @@
+import { eq } from "drizzle-orm";
+import { create } from "zustand";
+import { db } from "../db/client";
+import { categories as catTable, transactions as txTable } from "../db/schema";
+import type {
+  Category,
+  NewCategory,
+  NewTransaction,
+  Transaction,
+} from "../lib/types";
+
+interface FinanceState {
+  categories: Category[];
+  transactions: Transaction[];
+  isHydrated: boolean;
+
+  hydrate: () => Promise<void>;
+
+  addCategory: (cat: NewCategory) => Promise<void>;
+  updateCategory: (id: number, patch: Partial<NewCategory>) => Promise<void>;
+  deleteCategory: (id: number) => Promise<void>;
+
+  addTransaction: (tx: NewTransaction) => Promise<void>;
+  updateTransaction: (
+    id: number,
+    patch: Partial<NewTransaction>,
+  ) => Promise<void>;
+  deleteTransaction: (id: number) => Promise<void>;
+}
+
+export const useFinanceStore = create<FinanceState>((set, get) => ({
+  categories: [],
+  transactions: [],
+  isHydrated: false,
+
+  hydrate: async () => {
+    const [cats, txs] = await Promise.all([
+      db.select().from(catTable),
+      db.select().from(txTable),
+    ]);
+    set({ categories: cats, transactions: txs, isHydrated: true });
+  },
+
+  addCategory: async (cat) => {
+    const tempId = -Date.now();
+    set((s) => ({
+      categories: [
+        ...s.categories,
+        { id: tempId, name: cat.name, monthlyBudget: cat.monthlyBudget ?? 0 },
+      ],
+    }));
+
+    try {
+      const [inserted] = await db.insert(catTable).values(cat).returning();
+      set((s) => ({
+        categories: s.categories.map((c) => (c.id === tempId ? inserted : c)),
+      }));
+    } catch {
+      set((s) => ({
+        categories: s.categories.filter((c) => c.id !== tempId),
+      }));
+    }
+  },
+
+  updateCategory: async (id, patch) => {
+    const prev = get().categories.find((c) => c.id === id);
+    set((s) => ({
+      categories: s.categories.map((c) =>
+        c.id === id ? { ...c, ...patch } : c,
+      ),
+    }));
+    try {
+      await db.update(catTable).set(patch).where(eq(catTable.id, id));
+    } catch {
+      if (prev)
+        set((s) => ({
+          categories: s.categories.map((c) => (c.id === id ? prev : c)),
+        }));
+    }
+  },
+
+  deleteCategory: async (id) => {
+    const prev = get().categories.find((c) => c.id === id);
+    set((s) => ({ categories: s.categories.filter((c) => c.id !== id) }));
+    try {
+      await db.delete(catTable).where(eq(catTable.id, id));
+    } catch {
+      if (prev) set((s) => ({ categories: [...s.categories, prev] }));
+    }
+  },
+
+  addTransaction: async (tx) => {
+    const tempId = -Date.now();
+    const optimistic: Transaction = {
+      id: tempId,
+      amount: tx.amount,
+      type: tx.type,
+      date: tx.date,
+      categoryId: tx.categoryId,
+      description: tx.description ?? "",
+    };
+    set((s) => ({ transactions: [optimistic, ...s.transactions] }));
+
+    try {
+      const [inserted] = await db.insert(txTable).values(tx).returning();
+      set((s) => ({
+        transactions: s.transactions.map((t) =>
+          t.id === tempId ? inserted : t,
+        ),
+      }));
+    } catch {
+      set((s) => ({
+        transactions: s.transactions.filter((t) => t.id !== tempId),
+      }));
+    }
+  },
+
+  updateTransaction: async (id, patch) => {
+    const prev = get().transactions.find((t) => t.id === id);
+    set((s) => ({
+      transactions: s.transactions.map((t) =>
+        t.id === id ? { ...t, ...patch } : t,
+      ),
+    }));
+    try {
+      await db.update(txTable).set(patch).where(eq(txTable.id, id));
+    } catch {
+      if (prev)
+        set((s) => ({
+          transactions: s.transactions.map((t) => (t.id === id ? prev : t)),
+        }));
+    }
+  },
+
+  deleteTransaction: async (id) => {
+    const prev = get().transactions.find((t) => t.id === id);
+    set((s) => ({ transactions: s.transactions.filter((t) => t.id !== id) }));
+    try {
+      await db.delete(txTable).where(eq(txTable.id, id));
+    } catch {
+      if (prev) set((s) => ({ transactions: [...s.transactions, prev] }));
+    }
+  },
+}));
