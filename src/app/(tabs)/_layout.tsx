@@ -1,18 +1,9 @@
-import MonthSelector from "@/components/MonthSelector";
-import TransactionCard from "@/components/TransactionCard";
 import { Tabs } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function TabLayout() {
   return (
     <View style={styles.container}>
-      <MonthSelector />
-      <TransactionCard
-        description="Weekly grocery shopping"
-        amount={50}
-        date="2023-10-01"
-        category="Groceries"
-      />
       <View style={styles.tabs}>
         <Tabs
           screenOptions={{

@@ -1,34 +1,23 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ListItem, Text } from "@expo/ui";
 
 export default function TransactionCard({
   date,
   amount,
   category,
   description,
+  onPress,
 }: {
   date?: string;
   amount?: number;
   category?: string;
   description?: string;
+  onPress?: () => void;
 }) {
   return (
-    <View style={styles.row}>
-      <Text style={styles.item}>{date}</Text>
-      <Text style={styles.item}>{amount}</Text>
-      <Text style={styles.item}>{category}</Text>
-      <Text style={styles.item}>{description}</Text>
-    </View>
+    <ListItem
+      supportingText={`${date} • ${category}`}
+      trailing={<Text>{`$${amount?.toFixed(2) ?? "0.00"}`}</Text>}
+      onPress={onPress}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 8,
-  },
-  item: {
-    flex: 1,
-  },
-});

@@ -1,19 +1,13 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, Row, Text } from "@expo/ui";
+import { useState } from "react";
 
 export default function MonthSelector() {
+  const [date, setDate] = useState(new Date());
   return (
-    <View style={styles.row}>
-      <Button title="⬅️" />
-      <Text>June 2026</Text>
-      <Button title="➡️" />
-    </View>
+    <Row alignment="center" spacing={16}>
+      <Button variant="outlined" label="⬅️" onPress={() => setDate(new Date(date.setMonth(date.getMonth() - 1)))} />
+      <Text>{date.toLocaleDateString(undefined, { month: "long", year: "numeric" })}</Text>
+      <Button variant="outlined" label="➡️" onPress={() => setDate(new Date(date.setMonth(date.getMonth() + 1)))} />
+    </Row>
   );
 }
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-});
