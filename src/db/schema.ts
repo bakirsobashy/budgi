@@ -5,6 +5,7 @@ export const categories = sqliteTable("categories", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull().unique(),
   monthlyBudget: real("monthly_budget").notNull().default(0),
+  type: text("type", { enum: ["income", "expense"] }).notNull(),
 });
 
 // ─── Transactions ────────────────────────────────────────────

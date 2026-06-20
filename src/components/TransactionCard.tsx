@@ -15,8 +15,8 @@ export default function TransactionCard({
   onPress?: () => void;
 }) {
   return (
-    <ElevatedCard modifiers={[clickable(onPress ?? (() => console.log("click"))), fillMaxWidth(1), height(50)]}>
-      <Row modifiers={[paddingAll(16)]} >
+    <ElevatedCard modifiers={[fillMaxWidth(1), height(50)]}>
+      <Row>
         <Text>{category || 'No category'}</Text>
         <Spacer flexible />
         <Text>{date}</Text>

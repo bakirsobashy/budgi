@@ -48,7 +48,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     set((s) => ({
       categories: [
         ...s.categories,
-        { id: tempId, name: cat.name, monthlyBudget: cat.monthlyBudget ?? 0 },
+        { id: tempId, name: cat.name, monthlyBudget: cat.monthlyBudget ?? 0, type: cat.type },
       ],
     }));
 
