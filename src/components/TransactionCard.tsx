@@ -1,5 +1,6 @@
-import { ListItem, Text } from "@expo/ui";
-
+import { Row, Spacer, Text } from "@expo/ui";
+import { ElevatedCard } from "@expo/ui/jetpack-compose";
+import { clickable, fillMaxWidth, height, paddingAll } from '@expo/ui/jetpack-compose/modifiers';
 export default function TransactionCard({
   date,
   amount,
@@ -7,17 +8,23 @@ export default function TransactionCard({
   description,
   onPress,
 }: {
-  date?: string;
+  date: string;
   amount?: number;
   category?: string;
   description?: string;
   onPress?: () => void;
 }) {
   return (
-    <ListItem
-      supportingText={`${date} • ${category}`}
-      trailing={<Text>{`$${amount?.toFixed(2) ?? "0.00"}`}</Text>}
-      onPress={onPress}
-    />
+    <ElevatedCard modifiers={[clickable(onPress ?? (() => console.log("click"))), fillMaxWidth(1), height(50)]}>
+      <Row modifiers={[paddingAll(16)]} >
+        <Text>{category || 'No category'}</Text>
+        <Spacer flexible />
+        <Text>{date}</Text>
+        <Spacer flexible />
+        <Text>{`$${amount?.toFixed(2) ?? '0.00'}`}</Text>
+      </Row>
+    </ElevatedCard>
   );
 }
+
+
