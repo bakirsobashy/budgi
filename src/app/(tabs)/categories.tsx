@@ -26,6 +26,7 @@ export default function Categories() {
                                 return (
                                     <CatCard
                                         key={cat.id}
+                                        color={cat.color}
                                         name={cat.name}
                                         onPress={() => { setOpen(true), setCatId(cat.id) }}
                                     />
