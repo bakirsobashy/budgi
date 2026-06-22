@@ -1,16 +1,21 @@
+
 import { useFinanceStore } from "@/store/useFinanceStore";
-import { Button } from "@expo/ui";
-import { BasicTextField, Box, Column, ModalBottomSheet, Text } from "@expo/ui/jetpack-compose";
-import { background, clip, fillMaxWidth, padding, paddingAll, Shapes } from "@expo/ui/jetpack-compose/modifiers";
+import { Row, ScrollView } from "@expo/ui";
+import { BasicTextField, Box, Button, Column, Icon, ModalBottomSheet, Text } from "@expo/ui/jetpack-compose";
+import { background, clip, fillMaxWidth, padding, paddingAll, Shapes, size } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
 
 type CatInput = {
     name: string;
-    // icon: string;
+    icon: string;
+    color: string;
 }
 export default function AddCatButton(
+
     { open, setOpen, type }: { open: boolean, setOpen: (open: boolean) => void, type: "income" | "expense" }) {
-    const [Cat, setCat] = useState<CatInput>({ name: '' });
+    const colors = ['#6200EE', '#03DAC5', '#FF5722', '#4CAF50', '#2196F3'];
+    const icons = ['@/assets/Icons/Check.png', '@/assets/Icons/Check.png', '@/assets/Icons/Check.png', '@/assets/Icons/Check.png', '@/assets/Icons/Check.png'];
+    const [Cat, setCat] = useState<CatInput>({ name: '', color: colors[0], icon: icons[0] });
     if (!open) return null;
     return (
         <ModalBottomSheet onDismissRequest={() => setOpen(false)}>
@@ -36,13 +41,32 @@ export default function AddCatButton(
                         </Box>
                     </BasicTextField.DecorationBox>
                 </BasicTextField>
+                <Text>color:</Text>
+                <ScrollView direction="horizontal">
+                    <Row spacing={8}>
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <Button onClick={() => { setCat({ ...Cat, color: colors[i] }) }} key={i} colors={{ containerColor: colors[i] }} modifiers={[size(40, 40)]} contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}>
+                                <Icon source={require('@/assets/Icons/Check.png')} size={24} ></Icon>
+                            </Button>
+                        ))}
+                    </Row>
+                </ScrollView>
+                <Text>Icon:</Text>
+                <ScrollView direction="horizontal">
+                    <Row spacing={8}>
+                        {Array.from({ length: 20 }).map((_, i) => (
+                            <Icon source={require(icons[i])} size={24} ></Icon>
+                        ))}
+                    </Row>
+                </ScrollView>
                 <Button
-                    label="Add"
-                    onPress={() => {
-                        useFinanceStore.getState().addCategory({ name: Cat.name, type });
+                    onClick={() => {
+                        useFinanceStore.getState().addCategory({ name: Cat.name, type, icon: Cat.icon, color: Cat.color });
                         setOpen(false);
                     }}
-                />
+                >
+                    <Text>Add</Text>
+                </Button>
             </Column>
         </ModalBottomSheet>
     )

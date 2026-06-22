@@ -6,7 +6,7 @@ export default function AddCatButton({ onClick }: { onClick: () => void }) {
             modifiers={[align('bottomEnd'), offset(-16, -16)]}
             onClick={onClick}>
             <FloatingActionButton.Icon>
-                <Icon source={require('./plus_Icon.png')} size={24} />
+                <Icon source={require('@/assets/Icons/plus_Icon.png')} size={24} />
             </FloatingActionButton.Icon>
         </FloatingActionButton>
     )

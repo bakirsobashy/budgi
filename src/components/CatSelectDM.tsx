@@ -26,7 +26,7 @@ export default function CatSelectDM({ categories, setCategory }: { categories: C
                             <Text>{cat.name}</Text>
                         </DropdownMenuItem.Text>
                         <DropdownMenuItem.LeadingIcon>
-                            <Icon source={require('./ThreeDots.png')} size={24} />
+                            <Icon source={require('@/assets/Icons/ThreeDots.png')} size={24} />
                         </DropdownMenuItem.LeadingIcon>
                     </DropdownMenuItem>
                 ))}
@@ -40,7 +40,7 @@ export default function CatSelectDM({ categories, setCategory }: { categories: C
                         <Text>Cancel</Text>
                     </DropdownMenuItem.Text>
                     <DropdownMenuItem.LeadingIcon>
-                        <Icon source={require('./ThreeDots.png')} size={24} />
+                        <Icon source={require('@/assets/Icons/ThreeDots.png')} size={24} />
                     </DropdownMenuItem.LeadingIcon>
                 </DropdownMenuItem>
             </DropdownMenu.Items>

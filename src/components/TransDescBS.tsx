@@ -15,7 +15,7 @@ export default function TransDescBS({ showBottomSheet, setShowBottomSheet, selec
                 </Row>
                 <Text>{`Description: ${selectedTransaction?.description ?? 'No description'}`}</Text>
                 <Button>
-                    <Icon source={require("./ThreeDots.png")} size={24} />
+                    <Icon source={require("@/assets/Icons/Pen.png")} size={24} />
                 </Button>
             </Column>
         </BottomSheet>

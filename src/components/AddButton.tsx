@@ -1,14 +1,14 @@
 import { DropdownMenu, DropdownMenuItem, FloatingActionButton, Icon, Text } from "@expo/ui/jetpack-compose";
-import { align } from "@expo/ui/jetpack-compose/modifiers";
+import { align, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
 export default function AddButton({ onClick }: { onClick: (type: "expense" | "income") => void }) {
     const [showDropdownMenu, setShowDropdownMenu] = useState(false);
     return (
-        <DropdownMenu expanded={showDropdownMenu} modifiers={[align('bottomEnd')]}>
+        <DropdownMenu expanded={showDropdownMenu} modifiers={[align('bottomEnd'), paddingAll(16)]} >
             <DropdownMenu.Trigger>
                 <FloatingActionButton onClick={() => { setShowDropdownMenu(true); }}>
                     <FloatingActionButton.Icon>
-                        <Icon source={require("./plus_Icon.png")} size={32} />
+                        <Icon source={require("@/assets/Icons/plus_Icon.png")} size={32} />
                     </FloatingActionButton.Icon>
                 </FloatingActionButton>
             </DropdownMenu.Trigger>
@@ -22,7 +22,7 @@ export default function AddButton({ onClick }: { onClick: (type: "expense" | "in
                         <Text>Add Income</Text>
                     </DropdownMenuItem.Text>
                     <DropdownMenuItem.LeadingIcon>
-                        <Icon source={require("./plus_Icon.png")} size={24} />
+                        <Icon source={require("@/assets/Icons/plus_Icon.png")} size={24} />
                     </DropdownMenuItem.LeadingIcon>
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -34,7 +34,7 @@ export default function AddButton({ onClick }: { onClick: (type: "expense" | "in
                         <Text>Add Expense</Text>
                     </DropdownMenuItem.Text>
                     <DropdownMenuItem.LeadingIcon>
-                        <Icon source={require("./minus_Icon.png")} size={24} />
+                        <Icon source={require("@/assets/Icons/minus_Icon.png")} size={24} />
                     </DropdownMenuItem.LeadingIcon>
                 </DropdownMenuItem>
             </DropdownMenu.Items>
