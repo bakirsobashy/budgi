@@ -22,7 +22,7 @@ export default function Categories() {
                     <IncomeTB isIncome={isIncome} setIsIncome={setIsIncome} />
                     <ScrollView>
                         <Column style={{ padding: 16 }} spacing={16}>
-                            {categories.map((cat) => {
+                            {categories.filter((cat) => cat.type === (isIncome ? "income" : "expense")).map((cat) => {
                                 return (
                                     <CatCard
                                         key={cat.id}
