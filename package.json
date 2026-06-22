@@ -4,6 +4,8 @@
   "version": "1.0.0",
   "dependencies": {
     "@expo/ui": "~56.0.18",
+    "@rn-primitives/menubar": "^1.4.0",
+    "@rn-primitives/slot": "^1.4.0",
     "drizzle-orm": "^0.45.2",
     "expo": "~56.0.12",
     "expo-constants": "~56.0.18",
@@ -44,7 +46,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "db:generate": "drizzle-kit generate"
   },
   "private": true
 }

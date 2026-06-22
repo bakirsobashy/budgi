@@ -1,9 +1,10 @@
-import { Text, View } from "react-native";
+import { Host } from "@expo/ui";
+import { Text } from "react-native";
 
 export default function Budgets() {
   return (
-    <View>
+    <Host>
       <Text>Budgets</Text>
-    </View>
+    </Host>
   );
 }

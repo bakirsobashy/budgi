@@ -1,7 +1,17 @@
 import { useFinanceStore } from "@/store/useFinanceStore";
-import { BottomSheet, Button, Picker, TextInput } from "@expo/ui";
-import { Column, DateTimePicker } from "@expo/ui/jetpack-compose";
+import { BottomSheet, Button, Picker, Spacer, Text, TextInput } from "@expo/ui";
+import DateTimePicker from "@expo/ui/community/datetime-picker";
+import { BasicTextField, Box, Column, Row } from "@expo/ui/jetpack-compose";
+import {
+    background,
+    clip,
+    fillMaxWidth,
+    padding,
+    paddingAll,
+    Shapes
+} from '@expo/ui/jetpack-compose/modifiers';
 import { useState } from "react";
+
 
 type TransactionInput = {
     type: "expense" | "income";
@@ -17,10 +27,16 @@ export default function AddTransactionButtomSheet({ showAddButtomSheet, setShowA
         categoryId: 1,
         date: new Date(),
         description: "",
+
     })
+    const [showDatePicker, setShowDatePicker] = useState(false);
+
     return (
         <BottomSheet isPresented={showAddButtomSheet} onDismiss={() => setShowAddButtomSheet(false)}>
-            <Column >
+            <Column
+                verticalArrangement={{ spacedBy: 16 }}
+                modifiers={[fillMaxWidth(), paddingAll(16)]}>
+
                 <TextInput
                     placeholder="Amount"
                     defaultValue={transaction.amount.toString()}
@@ -29,27 +45,51 @@ export default function AddTransactionButtomSheet({ showAddButtomSheet, setShowA
                         setTransaction({ ...transaction, amount: Number(text) })
                     }
                 />
-                <Picker selectedValue={transaction.categoryId} onValueChange={(value) => setTransaction({ ...transaction, categoryId: value })}>
+                <Picker
+                    selectedValue={transaction.categoryId}
+                    onValueChange={(value) => setTransaction({ ...transaction, categoryId: value })}>
                     {useFinanceStore((state) => state.categories).map((c) => (
-                        console.log(c),
                         <Picker.Item key={c.id} label={c.name} value={c.id} />
                     ))}
                 </Picker>
-                <TextInput
-                    placeholder="Description"
-                    defaultValue={transaction.description}
-                    onChangeText={(text) =>
-                        setTransaction({ ...transaction, description: text })
-                    }
-                />
-                <DateTimePicker
-                    onDateSelected={date => {
-                        setTransaction({ ...transaction, date: date });
-                    }}
-                    displayedComponents="date"
-                    initialDate={transaction.date.toISOString()}
-                    variant="picker"
-                />
+                <BasicTextField
+                    onValueChange={(text) => setTransaction({ ...transaction, description: text })}
+                    cursorColor="#7c3aed"
+                    modifiers={[
+                        fillMaxWidth(),
+                        clip(Shapes.RoundedCorner(12)),
+                        background('#e3e2e2ff'),
+                        padding(12, 10, 12, 10),
+                    ]}>
+                    <BasicTextField.DecorationBox>
+                        <Box>
+                            <BasicTextField.Placeholder>
+                                <Text>Description</Text>
+                            </BasicTextField.Placeholder>
+                            <BasicTextField.InnerTextField />
+                        </Box>
+                    </BasicTextField.DecorationBox>
+                </BasicTextField>
+                <Row>
+
+                    <Text>Date:</Text>
+                    <Spacer flexible />
+                    <Button variant="outlined" onPress={() => setShowDatePicker(true)} label={transaction.date.toLocaleDateString()} />
+                    {showDatePicker && (
+                        <DateTimePicker
+                            value={transaction.date}
+                            onChange={(event, value) => {
+                                setShowDatePicker(false);
+                                if (value) {
+                                    setTransaction({
+                                        ...transaction,
+                                        date: value as Date,
+                                    });
+                                }
+                            }}
+                        />
+                    )}
+                </Row>
                 <Button
                     label="Add Transaction"
                     onPress={() => {
@@ -66,6 +106,8 @@ export default function AddTransactionButtomSheet({ showAddButtomSheet, setShowA
                             date: new Date(),
                             description: "",
                         });
+                        setShowAddButtomSheet(false);
+                        setShowDatePicker(false);
                     }}
                 />
             </Column>

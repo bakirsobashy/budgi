@@ -21,17 +21,17 @@ export default function TabLayout() {
             }}
           />
           <Tabs.Screen
-            name="add"
-            options={{
-              title: "Add",
-              tabBarIcon: ({ color, size }) => <Text>➕</Text>,
-            }}
-          />
-          <Tabs.Screen
             name="budgets"
             options={{
               title: "Budgets",
               tabBarIcon: ({ color, size }) => <Text>📈</Text>,
+            }}
+          />
+          <Tabs.Screen
+            name="categories"
+            options={{
+              title: "Categories",
+              tabBarIcon: ({ color, size }) => <Text>💰</Text>,
             }}
           />
         </Tabs>

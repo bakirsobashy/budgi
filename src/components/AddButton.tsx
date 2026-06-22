@@ -1,5 +1,4 @@
 import { DropdownMenu, DropdownMenuItem, FloatingActionButton, Icon, Text } from "@expo/ui/jetpack-compose";
-import { align, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
 export default function AddButton({ onClick }: { onClick: (type: "expense" | "income") => void }) {
     const [showDropdownMenu, setShowDropdownMenu] = useState(false);
