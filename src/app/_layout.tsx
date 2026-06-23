@@ -17,7 +17,7 @@ export default function RootLayout() {
     if (success) {
       seedCategories().then(() => hydrate());
     }
-  }, [success]);
+  }, [success, hydrate]);
   if (error) return <Text>Migration error: {error.message}</Text>;
   if (!success || !isHydrated) return <Text>Loading…</Text>;
   return <Stack />;

@@ -28,6 +28,7 @@ export default function Categories() {
                                         key={cat.id}
                                         color={cat.color}
                                         name={cat.name}
+                                        icon={cat.icon}
                                         onPress={() => { setOpen(true), setCatId(cat.id) }}
                                     />
                                 );

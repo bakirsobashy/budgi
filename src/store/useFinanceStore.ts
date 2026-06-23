@@ -57,7 +57,8 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
       set((s) => ({
         categories: s.categories.map((c) => (c.id === tempId ? inserted : c)),
       }));
-    } catch {
+    } catch (e) {
+      console.error("[useFinanceStore] addCategory failed:", e);
       set((s) => ({
         categories: s.categories.filter((c) => c.id !== tempId),
       }));

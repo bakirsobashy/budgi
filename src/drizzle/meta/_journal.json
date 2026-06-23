@@ -15,6 +15,13 @@
       "when": 1781812353392,
       "tag": "0001_create_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1781812353393,
+      "tag": "0002_add_category_icon_color",
+      "breakpoints": true
     }
   ]
 }
