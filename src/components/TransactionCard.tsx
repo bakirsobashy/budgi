@@ -1,6 +1,11 @@
 import { Spacer, Text } from "@expo/ui";
-import { ElevatedButton } from "@expo/ui/jetpack-compose";
-import { fillMaxWidth, height } from "@expo/ui/jetpack-compose/modifiers";
+import { Icon, OutlinedButton } from "@expo/ui/jetpack-compose";
+import {
+  fillMaxWidth,
+  height,
+  offset,
+  size,
+} from "@expo/ui/jetpack-compose/modifiers";
 import { SymbolView } from "expo-symbols";
 export default function TransactionCard({
   date,
@@ -11,6 +16,7 @@ export default function TransactionCard({
   color,
   type,
   onPress,
+  onEditPress,
 }: {
   date: string;
   amount?: number;
@@ -20,9 +26,10 @@ export default function TransactionCard({
   color?: string | null;
   type: "expense" | "income";
   onPress: () => void;
+  onEditPress: () => void;
 }) {
   return (
-    <ElevatedButton modifiers={[fillMaxWidth(1), height(50)]} onClick={onPress}>
+    <OutlinedButton modifiers={[fillMaxWidth(1), height(50)]} onClick={onPress}>
       <SymbolView
         name={{ android: icon as any }}
         size={24}
@@ -40,6 +47,13 @@ export default function TransactionCard({
       >
         {`${type === "income" ? "+" : "-"}$${amount?.toFixed(2) ?? "0.00"}`}
       </Text>
-    </ElevatedButton>
+      <OutlinedButton
+        modifiers={[size(30, 30), offset(10, 0)]}
+        contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
+        onClick={onEditPress}
+      >
+        <Icon source={require("@/assets/Icons/Pen.png")} size={16} />
+      </OutlinedButton>
+    </OutlinedButton>
   );
 }

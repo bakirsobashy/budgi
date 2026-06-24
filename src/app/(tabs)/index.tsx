@@ -2,6 +2,7 @@ import AddButton from "@/components/AddButton";
 import AddTransactionButtomSheet from "@/components/AddTransactionButtomSheet";
 import TransactionCard from "@/components/TransactionCard";
 import TransDescBS from "@/components/TransDescBS";
+import TransEditBS from "@/components/TransEditBS";
 import { Transaction } from "@/lib/types";
 import { useFinanceStore } from "@/store/useFinanceStore";
 import { Column, ScrollView } from "@expo/ui";
@@ -13,6 +14,7 @@ const Index = () => {
   const categories = useFinanceStore((state) => state.categories);
   const [showAddButtomSheet, setShowAddButtomSheet] = useState(false);
   const [showDescButtomSheet, setShowDescButtomSheet] = useState(false);
+  const [showEditButtomSheet, setShowEditButtomSheet] = useState(false);
   const [selectedTransaction, setSelectedTransaction] =
     useState<Transaction | null>(null);
   const [type, setType] = useState<"expense" | "income">("expense");
@@ -42,6 +44,10 @@ const Index = () => {
                     setSelectedTransaction(tx);
                     setShowDescButtomSheet(true);
                   }}
+                  onEditPress={() => {
+                    setSelectedTransaction(tx);
+                    setShowEditButtomSheet(true);
+                  }}
                 />
               );
             })}
@@ -63,6 +69,11 @@ const Index = () => {
       <TransDescBS
         showBottomSheet={showDescButtomSheet}
         setShowBottomSheet={setShowDescButtomSheet}
+        selectedTransaction={selectedTransaction}
+      />
+      <TransEditBS
+        showBottomSheet={showEditButtomSheet}
+        setShowBottomSheet={setShowEditButtomSheet}
         selectedTransaction={selectedTransaction}
       />
     </Host>
