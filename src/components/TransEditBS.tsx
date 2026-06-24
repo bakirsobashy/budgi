@@ -1,8 +1,15 @@
 import { Transaction } from "@/lib/types";
 import { useFinanceStore } from "@/store/useFinanceStore";
-import { BottomSheet, Button, Spacer, Text, TextInput } from "@expo/ui";
-import DateTimePicker from "@expo/ui/community/datetime-picker";
-import { BasicTextField, Box, Column, Row } from "@expo/ui/jetpack-compose";
+import { BottomSheet, Spacer, Text, TextInput } from "@expo/ui";
+import { DateTimePicker } from "@expo/ui/community/datetime-picker";
+import {
+  BasicTextField,
+  Box,
+  Button,
+  Column,
+  OutlinedButton,
+  Row,
+} from "@expo/ui/jetpack-compose";
 import {
   background,
   clip,
@@ -28,7 +35,7 @@ export default function TransEditBS({
 }: {
   showBottomSheet: boolean;
   setShowBottomSheet: (showBottomSheet: boolean) => void;
-  selectedTransaction: Transaction;
+  selectedTransaction: Transaction | null;
 }) {
   const [transaction, setTransaction] = useState<TransactionInput>({
     type: selectedTransaction?.type || "expense",
@@ -103,11 +110,9 @@ export default function TransEditBS({
         <Row>
           <Text>Date:</Text>
           <Spacer flexible />
-          <Button
-            variant="outlined"
-            onPress={() => setShowDatePicker(true)}
-            label={transaction.date.toLocaleDateString()}
-          />
+          <OutlinedButton onClick={() => setShowDatePicker(true)}>
+            <Text>{transaction.date.toLocaleDateString()}</Text>
+          </OutlinedButton>
           {showDatePicker && (
             <DateTimePicker
               value={transaction.date}
@@ -123,20 +128,37 @@ export default function TransEditBS({
             />
           )}
         </Row>
-        <Button
-          label="Done"
-          onPress={() => {
-            // Update transaction in store
-            useFinanceStore
-              .getState()
-              .updateTransaction(selectedTransaction?.id as number, {
-                ...transaction,
-                date: transaction.date.toISOString(),
-              });
-            setShowBottomSheet(false);
-            setShowDatePicker(false);
-          }}
-        />
+        <Row>
+          <Button
+            colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
+            onClick={() => {
+              // Update transaction in store
+              useFinanceStore
+                .getState()
+                .deleteTransaction(selectedTransaction?.id as number);
+              setShowBottomSheet(false);
+            }}
+          >
+            <Text>Delete</Text>
+          </Button>
+          <Spacer flexible />
+          <Button
+            colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
+            onClick={() => {
+              // Update transaction in store
+              useFinanceStore
+                .getState()
+                .updateTransaction(selectedTransaction?.id as number, {
+                  ...transaction,
+                  date: transaction.date.toISOString(),
+                });
+              setShowBottomSheet(false);
+              setShowDatePicker(false);
+            }}
+          >
+            <Text>Done</Text>
+          </Button>
+        </Row>
       </Column>
     </BottomSheet>
   );

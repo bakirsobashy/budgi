@@ -3,6 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
+    "@expo/material-symbols": "^0.1.1",
     "@expo/ui": "~56.0.18",
     "@rn-primitives/menubar": "^1.4.0",
     "@rn-primitives/slot": "^1.4.0",

@@ -1,43 +1,71 @@
-import { DropdownMenu, DropdownMenuItem, FloatingActionButton, Icon, Text } from "@expo/ui/jetpack-compose";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  FloatingActionButton,
+  Icon,
+  Text,
+} from "@expo/ui/jetpack-compose";
 import { align, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
-export default function AddButton({ onClick }: { onClick: (type: "expense" | "income") => void }) {
-    const [showDropdownMenu, setShowDropdownMenu] = useState(false);
-    return (
-        <DropdownMenu expanded={showDropdownMenu} modifiers={[align('bottomEnd'), paddingAll(16)]} >
-            <DropdownMenu.Trigger>
-                <FloatingActionButton onClick={() => { setShowDropdownMenu(true); }}>
-                    <FloatingActionButton.Icon>
-                        <Icon source={require("@/assets/Icons/plus_Icon.png")} size={32} />
-                    </FloatingActionButton.Icon>
-                </FloatingActionButton>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Items>
-                <DropdownMenuItem
-                    onClick={() => {
-                        setShowDropdownMenu(false);
-                        onClick("income");
-                    }}>
-                    <DropdownMenuItem.Text>
-                        <Text>Add Income</Text>
-                    </DropdownMenuItem.Text>
-                    <DropdownMenuItem.LeadingIcon>
-                        <Icon source={require("@/assets/Icons/plus_Icon.png")} size={24} />
-                    </DropdownMenuItem.LeadingIcon>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                    onClick={() => {
-                        setShowDropdownMenu(false);
-                        onClick("expense");
-                    }}>
-                    <DropdownMenuItem.Text>
-                        <Text>Add Expense</Text>
-                    </DropdownMenuItem.Text>
-                    <DropdownMenuItem.LeadingIcon>
-                        <Icon source={require("@/assets/Icons/minus_Icon.png")} size={24} />
-                    </DropdownMenuItem.LeadingIcon>
-                </DropdownMenuItem>
-            </DropdownMenu.Items>
-        </DropdownMenu >
-    )
+
+import {
+  default as add,
+  default as income,
+} from "@expo/material-symbols/add.xml";
+import expense from "@expo/material-symbols/remove.xml";
+
+export default function AddButton({
+  onClick,
+}: {
+  onClick: (type: "expense" | "income") => void;
+}) {
+  const [showDropdownMenu, setShowDropdownMenu] = useState(false);
+  return (
+    <DropdownMenu
+      expanded={showDropdownMenu}
+      modifiers={[align("bottomEnd"), paddingAll(16)]}
+      color="black"
+    >
+      <DropdownMenu.Trigger>
+        <FloatingActionButton
+          onClick={() => {
+            setShowDropdownMenu(true);
+          }}
+          containerColor="black"
+        >
+          <FloatingActionButton.Icon>
+            <Icon source={add} tint={"#FFFFFF"} />
+          </FloatingActionButton.Icon>
+        </FloatingActionButton>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Items>
+        <DropdownMenuItem
+          onClick={() => {
+            setShowDropdownMenu(false);
+            onClick("income");
+          }}
+        >
+          <DropdownMenuItem.LeadingIcon>
+            <Icon source={income} tint={"#FFFFFF"} />
+          </DropdownMenuItem.LeadingIcon>
+          <DropdownMenuItem.Text>
+            <Text color="white">Income</Text>
+          </DropdownMenuItem.Text>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            setShowDropdownMenu(false);
+            onClick("expense");
+          }}
+        >
+          <DropdownMenuItem.LeadingIcon>
+            <Icon source={expense} tint={"#FFFFFF"} />
+          </DropdownMenuItem.LeadingIcon>
+          <DropdownMenuItem.Text>
+            <Text color="white">Expense</Text>
+          </DropdownMenuItem.Text>
+        </DropdownMenuItem>
+      </DropdownMenu.Items>
+    </DropdownMenu>
+  );
 }
