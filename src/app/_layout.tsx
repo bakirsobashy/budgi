@@ -20,5 +20,14 @@ export default function RootLayout() {
   }, [success, hydrate]);
   if (error) return <Text>Migration error: {error.message}</Text>;
   if (!success || !isHydrated) return <Text>Loading…</Text>;
-  return <Stack />;
+  return (
+    <Stack>
+      <Stack.Screen
+        name="(tabs)"
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack>
+  );
 }
