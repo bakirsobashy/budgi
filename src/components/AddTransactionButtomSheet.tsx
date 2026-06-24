@@ -1,15 +1,14 @@
 import { useFinanceStore } from "@/store/useFinanceStore";
-import { BottomSheet, Button, Spacer, Text, TextInput } from "@expo/ui";
+import { BottomSheet, Spacer, Text, TextInput } from "@expo/ui";
 import DateTimePicker from "@expo/ui/community/datetime-picker";
-import { BasicTextField, Box, Column, Row } from "@expo/ui/jetpack-compose";
 import {
-  background,
-  clip,
-  fillMaxWidth,
-  padding,
-  paddingAll,
-  Shapes,
-} from "@expo/ui/jetpack-compose/modifiers";
+  Button,
+  Column,
+  OutlinedButton,
+  OutlinedTextField,
+  Row,
+} from "@expo/ui/jetpack-compose";
+import { fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
 import CatSelectDM from "./CatSelectDM";
 
@@ -80,35 +79,12 @@ export default function AddTransactionButtomSheet({
             }
           />
         </Row>
-        <BasicTextField
-          onValueChange={(text) =>
-            setTransaction({ ...transaction, description: text })
-          }
-          cursorColor="#7c3aed"
-          modifiers={[
-            fillMaxWidth(),
-            clip(Shapes.RoundedCorner(12)),
-            background("#e3e2e2ff"),
-            padding(12, 10, 12, 10),
-          ]}
-        >
-          <BasicTextField.DecorationBox>
-            <Box>
-              <BasicTextField.Placeholder>
-                <Text>Description</Text>
-              </BasicTextField.Placeholder>
-              <BasicTextField.InnerTextField />
-            </Box>
-          </BasicTextField.DecorationBox>
-        </BasicTextField>
         <Row>
           <Text>Date:</Text>
           <Spacer flexible />
-          <Button
-            variant="outlined"
-            onPress={() => setShowDatePicker(true)}
-            label={transaction.date.toLocaleDateString()}
-          />
+          <OutlinedButton onClick={() => setShowDatePicker(true)}>
+            <Text>{transaction.date.toLocaleDateString()}</Text>
+          </OutlinedButton>
           {showDatePicker && (
             <DateTimePicker
               value={transaction.date}
@@ -124,9 +100,27 @@ export default function AddTransactionButtomSheet({
             />
           )}
         </Row>
+        <OutlinedTextField
+          colors={{
+            focusedIndicatorColor: "#000000",
+            unfocusedIndicatorColor: "#000000",
+            focusedContainerColor: "transparent",
+            unfocusedContainerColor: "transparent",
+            focusedLabelColor: "#000000",
+            unfocusedLabelColor: "#000000",
+          }}
+          // value={transaction.description}
+          onValueChange={(text) =>
+            setTransaction({ ...transaction, description: text })
+          }
+        >
+          <OutlinedTextField.Label>
+            <Text>Description</Text>
+          </OutlinedTextField.Label>
+        </OutlinedTextField>
         <Button
-          label="Add Transaction"
-          onPress={() => {
+          colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
+          onClick={() => {
             // Add transaction to store
             useFinanceStore.getState().addTransaction({
               ...transaction,
@@ -143,7 +137,9 @@ export default function AddTransactionButtomSheet({
             setShowAddButtomSheet(false);
             setShowDatePicker(false);
           }}
-        />
+        >
+          <Text>Add Transaction</Text>
+        </Button>
       </Column>
     </BottomSheet>
   );
