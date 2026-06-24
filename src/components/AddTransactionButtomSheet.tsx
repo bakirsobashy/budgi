@@ -10,7 +10,7 @@ import {
   paddingAll,
   Shapes,
 } from "@expo/ui/jetpack-compose/modifiers";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CatSelectDM from "./CatSelectDM";
 
 type TransactionInput = {
@@ -40,9 +40,9 @@ export default function AddTransactionButtomSheet({
   });
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  useEffect(() => {
-    setTransaction((prev) => ({ ...prev, type }));
-  }, [type]);
+  // useEffect(() => {
+  //   setTransaction((prev) => ({ ...prev, type }));
+  // }, [type]);
 
   const categories = useFinanceStore((state) => state.categories).filter(
     (c) => c.type === transaction.type,
