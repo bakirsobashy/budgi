@@ -16,11 +16,15 @@ export default function CatCard({
 }) {
   return (
     <ElevatedButton modifiers={[fillMaxWidth(1), height(50)]} onClick={onPress}>
-      <SymbolView
-        name={{ android: icon as any }}
-        size={24}
-        tintColor={color || undefined}
-      />
+      {icon ? (
+        <SymbolView
+          name={{ android: icon as any }}
+          size={24}
+          tintColor={color || undefined}
+        />
+      ) : (
+        <Spacer size={24} />
+      )}
       <Spacer size={8} />
       <Text textStyle={color ? { color } : undefined}>{name}</Text>
       <Spacer flexible />

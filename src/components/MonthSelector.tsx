@@ -4,13 +4,7 @@ import {
   Text,
 } from "@expo/ui/jetpack-compose";
 import { useEffect, useState } from "react";
-import {
-  Modal,
-  Platform,
-  Text as RNText,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Modal, Text as RNText, TouchableOpacity, View } from "react-native";
 
 const MONTHS = [
   "Jan",
@@ -117,7 +111,9 @@ export function JSMonthPicker({
                   }}
                   onPress={() => onChange(new Date(year, i))}
                 >
-                  <RNText style={{ color: isSelected ? "white" : "black" }}>{m}</RNText>
+                  <RNText style={{ color: isSelected ? "white" : "black" }}>
+                    {m}
+                  </RNText>
                 </TouchableOpacity>
               );
             })}

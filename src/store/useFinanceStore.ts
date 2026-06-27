@@ -26,6 +26,7 @@ interface FinanceState {
     patch: Partial<NewTransaction>,
   ) => Promise<void>;
   deleteTransaction: (id: number) => Promise<void>;
+  clear: () => Promise<void>;
 }
 
 export const useFinanceStore = create<FinanceState>((set, get) => ({
@@ -48,7 +49,13 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
     set((s) => ({
       categories: [
         ...s.categories,
-        { id: tempId, name: cat.name, type: cat.type, icon: cat.icon, color: cat.color },
+        {
+          id: tempId,
+          name: cat.name,
+          type: cat.type,
+          icon: cat.icon,
+          color: cat.color,
+        },
       ],
     }));
 
@@ -66,7 +73,12 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
   },
 
   updateCategory: async (id, patch) => {
-    console.log("[useFinanceStore] updateCategory() called with id:", id, "patch:", patch);
+    console.log(
+      "[useFinanceStore] updateCategory() called with id:",
+      id,
+      "patch:",
+      patch,
+    );
     const prev = get().categories.find((c) => c.id === id);
     set((s) => ({
       categories: s.categories.map((c) =>
@@ -122,7 +134,12 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
   },
 
   updateTransaction: async (id, patch) => {
-    console.log("[useFinanceStore] updateTransaction() called with id:", id, "patch:", patch);
+    console.log(
+      "[useFinanceStore] updateTransaction() called with id:",
+      id,
+      "patch:",
+      patch,
+    );
     const prev = get().transactions.find((t) => t.id === id);
     set((s) => ({
       transactions: s.transactions.map((t) =>
@@ -147,6 +164,16 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
       await db.delete(txTable).where(eq(txTable.id, id));
     } catch {
       if (prev) set((s) => ({ transactions: [...s.transactions, prev] }));
+    }
+  },
+  clear: async () => {
+    console.log("[useFinanceStore] clear() called");
+    set({ categories: [], transactions: [], isHydrated: false });
+    try {
+      await db.delete(catTable);
+      await db.delete(txTable);
+    } catch (e) {
+      console.error("[useFinanceStore] clear failed:", e);
     }
   },
 }));
