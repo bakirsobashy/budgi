@@ -1,13 +1,27 @@
-import { Button, Row, Text } from "@expo/ui";
+import {
+  SegmentedButton,
+  SingleChoiceSegmentedButtonRow,
+  Text,
+} from "@expo/ui/jetpack-compose";
 import { useState } from "react";
 
-export default function MonthSelector() {
-  const [date, setDate] = useState(new Date());
+export default function SingleChoiceExample() {
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const options = ["Day", "Week", "Month", "Year"];
+
   return (
-    <Row alignment="center" spacing={16}>
-      <Button variant="outlined" label="⬅️" onPress={() => setDate(new Date(date.setMonth(date.getMonth() - 1)))} />
-      <Text>{date.toLocaleDateString(undefined, { month: "long", year: "numeric" })}</Text>
-      <Button variant="outlined" label="➡️" onPress={() => setDate(new Date(date.setMonth(date.getMonth() + 1)))} />
-    </Row>
+    <SingleChoiceSegmentedButtonRow>
+      {options.map((label, index) => (
+        <SegmentedButton
+          key={label}
+          selected={index === selectedIndex}
+          onClick={() => setSelectedIndex(index)}
+        >
+          <SegmentedButton.Label>
+            <Text>{label}</Text>
+          </SegmentedButton.Label>
+        </SegmentedButton>
+      ))}
+    </SingleChoiceSegmentedButtonRow>
   );
 }
