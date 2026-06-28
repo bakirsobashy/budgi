@@ -6,7 +6,8 @@ import {
   offset,
   size,
 } from "@expo/ui/jetpack-compose/modifiers";
-import { SymbolView } from "expo-symbols";
+import { ICON_MAP } from "@/lib/icons";
+
 export default function TransactionCard({
   date,
   amount,
@@ -31,11 +32,7 @@ export default function TransactionCard({
   return (
     <OutlinedButton modifiers={[fillMaxWidth(1), height(50)]} onClick={onPress}>
       {icon ? (
-        <SymbolView
-          name={{ android: icon as any }}
-          size={24}
-          tintColor={color || undefined}
-        />
+        <Icon source={ICON_MAP[icon] || ICON_MAP["check"]} size={24} tint={color || undefined} />
       ) : (
         <Spacer size={24} />
       )}

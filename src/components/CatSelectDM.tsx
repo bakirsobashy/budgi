@@ -6,8 +6,10 @@ import {
   Icon,
   OutlinedButton,
 } from "@expo/ui/jetpack-compose";
-import { SymbolView } from "expo-symbols";
 import { useState } from "react";
+
+import { ICON_MAP } from "@/lib/icons";
+
 export default function CatSelectDM({
   categories,
   setCategory,
@@ -24,10 +26,10 @@ export default function CatSelectDM({
     >
       <DropdownMenu.Trigger>
         <OutlinedButton onClick={() => setIsExpanded(true)}>
-          <SymbolView
-            name={{ android: selCat?.icon as any }}
+          <Icon
+            source={ICON_MAP[selCat?.icon || "check"]}
             size={24}
-            tintColor={selCat?.color || undefined}
+            tint={selCat?.color || undefined}
           />
           <Spacer size={8} />
           <Text textStyle={{ color: selCat?.color ?? undefined }}>
@@ -52,10 +54,10 @@ export default function CatSelectDM({
               </Text>
             </DropdownMenuItem.Text>
             <DropdownMenuItem.LeadingIcon>
-              <SymbolView
-                name={{ android: cat.icon as any }}
+              <Icon
+                source={ICON_MAP[cat.icon] || ICON_MAP["check"]}
                 size={24}
-                tintColor={cat.color || undefined}
+                tint={cat.color || undefined}
               />
             </DropdownMenuItem.LeadingIcon>
           </DropdownMenuItem>
@@ -70,9 +72,6 @@ export default function CatSelectDM({
           <DropdownMenuItem.Text>
             <Text>Cancel</Text>
           </DropdownMenuItem.Text>
-          <DropdownMenuItem.LeadingIcon>
-            <Icon source={require("@/assets/Icons/ThreeDots.png")} size={24} />
-          </DropdownMenuItem.LeadingIcon>
         </DropdownMenuItem>
       </DropdownMenu.Items>
     </DropdownMenu>

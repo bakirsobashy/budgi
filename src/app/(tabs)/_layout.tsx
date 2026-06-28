@@ -1,10 +1,10 @@
 import category from "@expo/material-symbols/category.xml";
 import Home from "@expo/material-symbols/home.xml";
 import budget from "@expo/material-symbols/money.xml";
-import { View } from "react-native";
 
 import { Host, Icon } from "@expo/ui/jetpack-compose";
 import { Tabs } from "expo-router";
+import { View } from "react-native";
 
 export default function TabLayout() {
   return (

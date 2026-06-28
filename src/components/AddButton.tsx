@@ -8,10 +8,8 @@ import {
 import { align, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
 
-import {
-  default as add,
-  default as income,
-} from "@expo/material-symbols/add.xml";
+import add from "@expo/material-symbols/add.xml";
+import income from "@expo/material-symbols/payments.xml";
 import expense from "@expo/material-symbols/remove.xml";
 
 export default function AddButton({

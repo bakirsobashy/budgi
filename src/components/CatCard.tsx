@@ -1,7 +1,8 @@
 import { Spacer, Text } from "@expo/ui";
 import { ElevatedButton, Icon } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, height } from "@expo/ui/jetpack-compose/modifiers";
-import { SymbolView } from "expo-symbols";
+
+import { ICON_MAP } from "@/lib/icons";
 
 export default function CatCard({
   icon,
@@ -9,22 +10,14 @@ export default function CatCard({
   name,
   onPress,
 }: {
-  icon?: string | null;
-  color?: string | null;
+  icon: string;
+  color: string;
   name: string;
   onPress: () => void;
 }) {
   return (
     <ElevatedButton modifiers={[fillMaxWidth(1), height(50)]} onClick={onPress}>
-      {icon ? (
-        <SymbolView
-          name={{ android: icon as any }}
-          size={24}
-          tintColor={color || undefined}
-        />
-      ) : (
-        <Spacer size={24} />
-      )}
+      <Icon source={ICON_MAP[icon] || ICON_MAP["check"]} size={24} tint={color} />
       <Spacer size={8} />
       <Text textStyle={color ? { color } : undefined}>{name}</Text>
       <Spacer flexible />

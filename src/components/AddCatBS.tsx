@@ -5,9 +5,9 @@ import {
   Box,
   Button,
   Column,
-  ElevatedButton,
   Icon,
   ModalBottomSheet,
+  OutlinedButton,
   Text,
 } from "@expo/ui/jetpack-compose";
 import {
@@ -19,16 +19,14 @@ import {
   Shapes,
   size,
 } from "@expo/ui/jetpack-compose/modifiers";
-import { SymbolView } from "expo-symbols";
 import { useState } from "react";
-import { View } from "react-native";
+
+import { ICON_MAP, ICON_NAMES } from "@/lib/icons";
 
 const colors = ["#6200EE", "#03DAC5", "#FF5722", "#4CAF50", "#2196F3"];
-const icons = ["check", "add", "cardio_load", "house", "book"] as const;
-type IconName = (typeof icons)[number];
 type CatInput = {
   name: string;
-  icon: IconName;
+  icon: string;
   color: string;
 };
 export default function AddCatButton({
@@ -40,15 +38,10 @@ export default function AddCatButton({
   setOpen: (open: boolean) => void;
   type: "income" | "expense";
 }) {
-  // const iconSources: Record<string, any> = {
-  //     'Check.png': require('@/assets/Icons/Check.png'),
-  //     'plus_Icon.png': require('@/assets/Icons/plus_Icon.png'),
-  //     'minus_Icon.png': require('@/assets/Icons/minus_Icon.png'),
-  // };
   const [Cat, setCat] = useState<CatInput>({
     name: "",
     color: colors[0],
-    icon: icons[0],
+    icon: ICON_NAMES[0],
   });
   if (!open) return null;
   return (
@@ -90,10 +83,7 @@ export default function AddCatButton({
                   modifiers={[size(40, 40)]}
                   contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
                 >
-                  <Icon
-                    source={require("@/assets/Icons/Check.png")}
-                    size={24}
-                  ></Icon>
+                  <Icon source={ICON_MAP["check"]} size={24}></Icon>
                 </Button>
               ) : (
                 <Button
@@ -104,10 +94,7 @@ export default function AddCatButton({
                   colors={{ containerColor: colors[i] }}
                   modifiers={[size(40, 40)]}
                 >
-                  <Icon
-                    source={require("@/assets/Icons/Check.png")}
-                    size={24}
-                  ></Icon>
+                  <Icon source={ICON_MAP["check"]} size={24}></Icon>
                 </Button>
               ),
             )}
@@ -116,43 +103,35 @@ export default function AddCatButton({
         <Text>Icon:</Text>
         <ScrollView direction="horizontal">
           <Row spacing={8}>
-            {icons.map((icon, i) =>
-              Cat.icon === icon ? (
-                <ElevatedButton
+            {ICON_NAMES.map((iconName, i) =>
+              Cat.icon === iconName ? (
+                <OutlinedButton
                   onClick={() => {
-                    setCat({ ...Cat, icon: icon });
+                    setCat({ ...Cat, icon: iconName });
                   }}
                   key={i}
                   modifiers={[size(40, 40)]}
-                  contentPadding={{ start: 7, top: 0, end: 0, bottom: 0 }}
+                  contentPadding={{ start: 8, top: 0, end: 0, bottom: 0 }}
                 >
-                  <View pointerEvents="none">
-                    <SymbolView
-                      name={{
-                        android: icon as any,
-                      }}
-                      tintColor={Cat.color}
-                    />
-                  </View>
-                </ElevatedButton>
+                  <Icon source={ICON_MAP[iconName]} tint={Cat.color} />
+                </OutlinedButton>
               ) : (
-                <ElevatedButton
+                <OutlinedButton
                   onClick={() => {
-                    setCat({ ...Cat, icon: icon });
+                    setCat({ ...Cat, icon: iconName });
                   }}
                   key={i}
                   modifiers={[size(40, 40)]}
-                  contentPadding={{ start: 7, top: 0, end: 0, bottom: 0 }}
+                  contentPadding={{ start: 8, top: 0, end: 0, bottom: 0 }}
                 >
-                  <View pointerEvents="none">
-                    <SymbolView name={{ android: icon as any }} size={24} />
-                  </View>
-                </ElevatedButton>
+                  <Icon source={ICON_MAP[iconName]} />
+                </OutlinedButton>
               ),
             )}
           </Row>
         </ScrollView>
         <Button
+          colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
           onClick={() => {
             useFinanceStore.getState().addCategory({
               name: Cat.name,

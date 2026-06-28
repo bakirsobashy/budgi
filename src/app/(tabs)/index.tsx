@@ -16,11 +16,12 @@ import {
 } from "@expo/ui/jetpack-compose";
 import {
   fillMaxWidth,
+  fillMaxSize,
   padding,
   paddingAll,
 } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
-import { Platform } from "react-native";
+import { Platform, View } from "react-native";
 
 const Index = () => {
   const transactions = useFinanceStore((state) => state.transactions);
@@ -53,7 +54,7 @@ const Index = () => {
               <Text>total:1500</Text>
             </OutlinedButton>
           </Column>
-          <Box>
+          <Box modifiers={[fillMaxSize()]}>
             <ScrollView>
               <Column
                 verticalArrangement={{ spacedBy: 16 }}
