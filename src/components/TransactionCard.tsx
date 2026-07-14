@@ -1,3 +1,4 @@
+import { ICON_MAP } from "@/lib/icons";
 import { Spacer, Text } from "@expo/ui";
 import { Icon, OutlinedButton } from "@expo/ui/jetpack-compose";
 import {
@@ -6,10 +7,8 @@ import {
   offset,
   size,
 } from "@expo/ui/jetpack-compose/modifiers";
-import { ICON_MAP } from "@/lib/icons";
 
 export default function TransactionCard({
-  date,
   amount,
   category,
   description,
@@ -19,7 +18,6 @@ export default function TransactionCard({
   onPress,
   onEditPress,
 }: {
-  date: string;
   amount?: number;
   category?: string;
   description?: string;
@@ -32,7 +30,11 @@ export default function TransactionCard({
   return (
     <OutlinedButton modifiers={[fillMaxWidth(1), height(50)]} onClick={onPress}>
       {icon ? (
-        <Icon source={ICON_MAP[icon] || ICON_MAP["check"]} size={24} tint={color || undefined} />
+        <Icon
+          source={ICON_MAP[icon] || ICON_MAP["check"]}
+          size={24}
+          tint={color || undefined}
+        />
       ) : (
         <Spacer size={24} />
       )}
@@ -40,8 +42,6 @@ export default function TransactionCard({
       <Text textStyle={color ? { color: color } : undefined}>
         {category || "Uncategorized"}
       </Text>
-      <Spacer flexible />
-      <Text>{date}</Text>
       <Spacer flexible />
       <Text
         textStyle={type === "income" ? { color: "green" } : { color: "red" }}

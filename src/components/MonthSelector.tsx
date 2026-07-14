@@ -3,7 +3,7 @@ import {
   SingleChoiceSegmentedButtonRow,
   Text,
 } from "@expo/ui/jetpack-compose";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Modal, Text as RNText, TouchableOpacity, View } from "react-native";
 
 const MONTHS = [
@@ -34,18 +34,13 @@ export function JSMonthPicker({
 }) {
   const [year, setYear] = useState(value.getFullYear());
 
-  useEffect(() => {
-    if (visible) {
-      setYear(value.getFullYear());
-    }
-  }, [visible, value]);
-
   return (
     <Modal
       transparent
       visible={visible}
       animationType="fade"
       onRequestClose={onClose}
+      onShow={() => setYear(value.getFullYear())}
     >
       <View
         style={{
@@ -155,10 +150,14 @@ export default function SingleChoiceExample({
       <SegmentedButton onClick={onOpenPicker}>
         <SegmentedButton.Label>
           <Text>
-            {selectedMonth.toLocaleDateString(undefined, {
-              month: "long",
-              year: "numeric",
-            })}
+            {(() => {
+              const formatted = selectedMonth.toLocaleDateString(undefined, {
+                month: "short",
+                year: "2-digit",
+              });
+              const [month, year] = formatted.split(" ");
+              return `${month} ${year}`;
+            })()}
           </Text>
         </SegmentedButton.Label>
       </SegmentedButton>

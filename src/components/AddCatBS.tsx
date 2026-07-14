@@ -43,6 +43,18 @@ export default function AddCatButton({
     color: colors[0],
     icon: ICON_NAMES[0],
   });
+  const [warning, setWarning] = useState("");
+
+  const validate = () => {
+    if (!Cat.name.trim()) {
+      return "Category name is required";
+    }
+    if (!Cat.color) {
+      return "Please select a color";
+    }
+    return "";
+  };
+
   if (!open) return null;
   return (
     <ModalBottomSheet onDismissRequest={() => setOpen(false)}>
@@ -111,7 +123,7 @@ export default function AddCatButton({
                   }}
                   key={i}
                   modifiers={[size(40, 40)]}
-                  contentPadding={{ start: 8, top: 0, end: 0, bottom: 0 }}
+                  contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
                 >
                   <Icon source={ICON_MAP[iconName]} tint={Cat.color} />
                 </OutlinedButton>
@@ -122,7 +134,7 @@ export default function AddCatButton({
                   }}
                   key={i}
                   modifiers={[size(40, 40)]}
-                  contentPadding={{ start: 8, top: 0, end: 0, bottom: 0 }}
+                  contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
                 >
                   <Icon source={ICON_MAP[iconName]} />
                 </OutlinedButton>
@@ -130,9 +142,16 @@ export default function AddCatButton({
             )}
           </Row>
         </ScrollView>
+        {warning ? <Text color="red">{warning}</Text> : null}
         <Button
           colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
           onClick={() => {
+            const validationWarning = validate();
+            if (validationWarning) {
+              setWarning(validationWarning);
+              return;
+            }
+            setWarning("");
             useFinanceStore.getState().addCategory({
               name: Cat.name,
               type,

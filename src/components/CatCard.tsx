@@ -1,6 +1,11 @@
 import { Spacer, Text } from "@expo/ui";
-import { ElevatedButton, Icon } from "@expo/ui/jetpack-compose";
-import { fillMaxWidth, height } from "@expo/ui/jetpack-compose/modifiers";
+import { Icon, OutlinedButton } from "@expo/ui/jetpack-compose";
+import {
+  fillMaxWidth,
+  height,
+  offset,
+  size,
+} from "@expo/ui/jetpack-compose/modifiers";
 
 import { ICON_MAP } from "@/lib/icons";
 
@@ -9,19 +14,31 @@ export default function CatCard({
   color,
   name,
   onPress,
+  onEditPress,
 }: {
   icon: string;
   color: string;
   name: string;
   onPress: () => void;
+  onEditPress: () => void;
 }) {
   return (
-    <ElevatedButton modifiers={[fillMaxWidth(1), height(50)]} onClick={onPress}>
-      <Icon source={ICON_MAP[icon] || ICON_MAP["check"]} size={24} tint={color} />
+    <OutlinedButton modifiers={[fillMaxWidth(1), height(50)]} onClick={onPress}>
+      <Icon
+        source={ICON_MAP[icon] || ICON_MAP["check"]}
+        size={24}
+        tint={color}
+      />
       <Spacer size={8} />
       <Text textStyle={color ? { color } : undefined}>{name}</Text>
       <Spacer flexible />
-      <Icon source={require("@/assets/Icons/ThreeDots.png")} size={24} />
-    </ElevatedButton>
+      <OutlinedButton
+        modifiers={[size(30, 30), offset(10, 0)]}
+        contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
+        onClick={onEditPress}
+      >
+        <Icon source={require("@/assets/Icons/Pen.png")} size={16} />
+      </OutlinedButton>
+    </OutlinedButton>
   );
 }

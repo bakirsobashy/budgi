@@ -15,13 +15,13 @@ import {
   Text,
 } from "@expo/ui/jetpack-compose";
 import {
-  fillMaxWidth,
   fillMaxSize,
+  fillMaxWidth,
   padding,
   paddingAll,
 } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
-import { Platform, View } from "react-native";
+import { Platform } from "react-native";
 
 const Index = () => {
   const transactions = useFinanceStore((state) => state.transactions);
@@ -50,9 +50,31 @@ const Index = () => {
               onMonthChange={(date) => setSelectedMonth(date)}
               onOpenPicker={() => setShowMonthPicker(true)}
             />
-            <OutlinedButton>
-              <Text>total:1500</Text>
-            </OutlinedButton>
+            {(() => {
+              const monthTxs = transactions.filter(
+                (tx) =>
+                  new Date(tx.date).getFullYear() ===
+                    selectedMonth.getFullYear() &&
+                  new Date(tx.date).getMonth() === selectedMonth.getMonth(),
+              );
+              const income = monthTxs
+                .filter((tx) => tx.type === "income")
+                .reduce((sum, tx) => sum + tx.amount, 0);
+              const expense = monthTxs
+                .filter((tx) => tx.type === "expense")
+                .reduce((sum, tx) => sum + tx.amount, 0);
+              const total = income - expense;
+              return (
+                <>
+                  <OutlinedButton>
+                    <Text>{`Total: ${total >= 0 ? "+" : "-"}$${Math.abs(total).toFixed(2)}`}</Text>
+                  </OutlinedButton>
+                  <OutlinedButton>
+                    <Text>{`Income: +$${income.toFixed(2)} | Expense: -$${expense.toFixed(2)}`}</Text>
+                  </OutlinedButton>
+                </>
+              );
+            })()}
           </Column>
           <Box modifiers={[fillMaxSize()]}>
             <ScrollView>
@@ -60,45 +82,68 @@ const Index = () => {
                 verticalArrangement={{ spacedBy: 16 }}
                 modifiers={[fillMaxWidth(), paddingAll(16)]}
               >
-                {transactions
-                  .filter(
-                    (tx) =>
-                      new Date(tx.date).getFullYear() ===
-                        selectedMonth.getFullYear() &&
-                      new Date(tx.date).getMonth() === selectedMonth.getMonth(),
+                {Object.entries(
+                  transactions
+                    .filter(
+                      (tx) =>
+                        new Date(tx.date).getFullYear() ===
+                          selectedMonth.getFullYear() &&
+                        new Date(tx.date).getMonth() ===
+                          selectedMonth.getMonth(),
+                    )
+                    .reduce(
+                      (groups, tx) => {
+                        const dayKey = new Date(tx.date).toDateString();
+                        if (!groups[dayKey]) groups[dayKey] = [];
+                        groups[dayKey].push(tx);
+                        return groups;
+                      },
+                      {} as Record<string, Transaction[]>,
+                    ),
+                )
+                  .sort(
+                    ([a], [b]) => new Date(b).getTime() - new Date(a).getTime(),
                   )
-                  .map((tx) => {
-                    const categoryName = categories.find(
-                      (c) => c.id === tx.categoryId,
-                    )?.name;
-                    return (
-                      <TransactionCard
-                        key={tx.id}
-                        amount={tx.amount}
-                        date={new Date(tx.date).toLocaleDateString(undefined, {
+                  .map(([dayKey, txs]) => (
+                    <Column
+                      key={dayKey}
+                      verticalArrangement={{ spacedBy: 4 }}
+                      modifiers={[fillMaxWidth()]}
+                    >
+                      <Text style={{ fontWeight: "bold" }}>
+                        {new Date(dayKey).toLocaleDateString(undefined, {
                           weekday: "short",
                           day: "numeric",
                           month: "short",
                         })}
-                        category={categoryName}
-                        color={
-                          categories.find((c) => c.id === tx.categoryId)?.color
-                        }
-                        icon={
-                          categories.find((c) => c.id === tx.categoryId)?.icon
-                        }
-                        type={tx.type}
-                        onPress={() => {
-                          setSelectedTransaction(tx);
-                          setShowDescButtomSheet(true);
-                        }}
-                        onEditPress={() => {
-                          setSelectedTransaction(tx);
-                          setShowEditButtomSheet(true);
-                        }}
-                      />
-                    );
-                  })}
+                      </Text>
+                      <Column verticalArrangement={{ spacedBy: 4 }}>
+                        {txs.map((tx) => {
+                          const category = categories.find(
+                            (c) => c.id === tx.categoryId,
+                          );
+                          return (
+                            <TransactionCard
+                              key={tx.id}
+                              amount={tx.amount}
+                              category={category?.name}
+                              color={category?.color}
+                              icon={category?.icon}
+                              type={tx.type}
+                              onPress={() => {
+                                setSelectedTransaction(tx);
+                                setShowDescButtomSheet(true);
+                              }}
+                              onEditPress={() => {
+                                setSelectedTransaction(tx);
+                                setShowEditButtomSheet(true);
+                              }}
+                            />
+                          );
+                        })}
+                      </Column>
+                    </Column>
+                  ))}
               </Column>
             </ScrollView>
             <AddButton

@@ -1,6 +1,5 @@
 import category from "@expo/material-symbols/category.xml";
 import Home from "@expo/material-symbols/home.xml";
-import budget from "@expo/material-symbols/money.xml";
 
 import { Host, Icon } from "@expo/ui/jetpack-compose";
 import { Tabs } from "expo-router";
@@ -25,19 +24,6 @@ export default function TabLayout() {
             <View pointerEvents="none">
               <Host matchContents>
                 <Icon source={Home} contentDescription="Home" />
-              </Host>
-            </View>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="budgets"
-        options={{
-          title: "Budgets",
-          tabBarIcon: ({ color, size }) => (
-            <View pointerEvents="none">
-              <Host matchContents>
-                <Icon source={budget} contentDescription="Home" />
               </Host>
             </View>
           ),

@@ -45,14 +45,24 @@ export default function TransEditBS({
     description: "",
   });
   const [showDatePicker, setShowDatePicker] = useState(false);
-
-  // useEffect(() => {
-  //   setTransaction((prev) => ({ ...prev, type }));
-  // }, [type]);
+  const [error, setError] = useState("");
 
   const categories = useFinanceStore((state) => state.categories).filter(
     (c) => c.type === transaction.type,
   );
+
+  const validate = () => {
+    if (!transaction.amount || transaction.amount <= 0) {
+      return "Amount must be greater than 0";
+    }
+    if (!transaction.categoryId || transaction.categoryId === 1) {
+      return "Please select a category other than Uncategorized";
+    }
+    if (!transaction.date || isNaN(transaction.date.getTime())) {
+      return "Please select a valid date";
+    }
+    return "";
+  };
 
   return (
     <BottomSheet
@@ -128,6 +138,7 @@ export default function TransEditBS({
             />
           )}
         </Row>
+        {error ? <Text style={{ color: "red" }}>{error}</Text> : null}
         <Row>
           <Button
             colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
@@ -145,6 +156,12 @@ export default function TransEditBS({
           <Button
             colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
             onClick={() => {
+              const validationError = validate();
+              if (validationError) {
+                setError(validationError);
+                return;
+              }
+              setError("");
               // Update transaction in store
               useFinanceStore
                 .getState()
