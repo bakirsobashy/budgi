@@ -1,6 +1,6 @@
 import { useFinanceStore } from "@/store/useFinanceStore";
-import { BottomSheet, Spacer, Text, TextInput } from "@expo/ui";
-import DateTimePicker from "@expo/ui/community/datetime-picker";
+import { BottomSheet, Spacer, Text, TextInput, useNativeState } from "@expo/ui";
+import DateTimePickerDefault from "@expo/ui/community/datetime-picker";
 import {
   Button,
   Column,
@@ -9,56 +9,64 @@ import {
   Row,
 } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CatSelectDM from "./CatSelectDM";
 
 type TransactionInput = {
-  type: "expense" | "income";
   amount: number;
   categoryId: number;
   date: Date;
   description: string;
 };
+
+const EMPTY_FORM: TransactionInput = {
+  amount: 0,
+  categoryId: 1,
+  date: new Date(),
+  description: "",
+};
+
 export default function AddTransactionButtomSheet({
   showAddButtomSheet,
   setShowAddButtomSheet,
   type,
-  setType,
 }: {
   showAddButtomSheet: boolean;
   setShowAddButtomSheet: (showAddButtomSheet: boolean) => void;
   type: "expense" | "income";
   setType: (type: "expense" | "income") => void;
 }) {
-  const [transaction, setTransaction] = useState<TransactionInput>({
-    type: type,
-    amount: 0,
-    categoryId: 1,
-    date: new Date(),
-    description: "",
-  });
+  const [transaction, setTransaction] = useState<TransactionInput>(EMPTY_FORM);
+  const amountState = useNativeState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    setTransaction((prev) => ({ ...prev, type }));
-  }, [type]);
-
   const categories = useFinanceStore((state) => state.categories).filter(
-    (c) => c.type === transaction.type,
+    (c) => c.type === type,
   );
 
   const validate = () => {
     if (!transaction.amount || transaction.amount <= 0) {
       return "Amount must be greater than 0";
     }
-    if (!transaction.categoryId || transaction.categoryId === 1) {
-      return "Please select a category other than Uncategorized";
+    if (!transaction.categoryId) {
+      return "Please select a category";
     }
     if (!transaction.date || isNaN(transaction.date.getTime())) {
       return "Please select a valid date";
     }
     return "";
+  };
+
+  const handleAmountChange = (text: string) => {
+    // ObservableState is intentionally mutable shared state.
+    // eslint-disable-next-line react-hooks/immutability
+    amountState.value = text;
+    const parsed = text === "" ? 0 : Number(text);
+    setTransaction((prev) => ({
+      ...prev,
+      amount: Number.isFinite(parsed) ? parsed : 0,
+    }));
   };
 
   return (
@@ -76,11 +84,9 @@ export default function AddTransactionButtomSheet({
           <TextInput
             modifiers={[fillMaxWidth(0.5)]}
             placeholder="Amount"
-            defaultValue={transaction.amount.toString()}
+            value={amountState}
             keyboardType="numeric"
-            onChangeText={(text) =>
-              setTransaction({ ...transaction, amount: Number(text) })
-            }
+            onChangeText={handleAmountChange}
           />
         </Row>
         <Row>
@@ -100,7 +106,7 @@ export default function AddTransactionButtomSheet({
             <Text>{transaction.date.toLocaleDateString()}</Text>
           </OutlinedButton>
           {showDatePicker && (
-            <DateTimePicker
+            <DateTimePickerDefault
               value={transaction.date}
               onChange={(event, value) => {
                 setShowDatePicker(false);
@@ -123,7 +129,6 @@ export default function AddTransactionButtomSheet({
             focusedLabelColor: "#000000",
             unfocusedLabelColor: "#000000",
           }}
-          // value={transaction.description}
           onValueChange={(text) =>
             setTransaction({ ...transaction, description: text })
           }
@@ -132,7 +137,7 @@ export default function AddTransactionButtomSheet({
             <Text>Description</Text>
           </OutlinedTextField.Label>
         </OutlinedTextField>
-        {error ? <Text style={{ color: "red" }}>{error}</Text> : null}
+        {error ? <Text textStyle={{ color: "red" }}>{error}</Text> : null}
         <Button
           colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
           onClick={() => {
@@ -142,19 +147,16 @@ export default function AddTransactionButtomSheet({
               return;
             }
             setError("");
-            // Add transaction to store
             useFinanceStore.getState().addTransaction({
               ...transaction,
+              type,
               date: transaction.date.toISOString(),
             });
             // Reset form
-            setTransaction({
-              type: type,
-              amount: 0,
-              categoryId: 1,
-              date: new Date(),
-              description: "",
-            });
+            setTransaction(EMPTY_FORM);
+            // ObservableState is intentionally mutable shared state.
+            // eslint-disable-next-line react-hooks/immutability
+            amountState.value = "";
             setShowAddButtomSheet(false);
             setShowDatePicker(false);
           }}

@@ -151,11 +151,12 @@ export default function SingleChoiceExample({
         <SegmentedButton.Label>
           <Text>
             {(() => {
-              const formatted = selectedMonth.toLocaleDateString(undefined, {
+              const month = selectedMonth.toLocaleDateString(undefined, {
                 month: "short",
+              });
+              const year = selectedMonth.toLocaleDateString(undefined, {
                 year: "2-digit",
               });
-              const [month, year] = formatted.split(" ");
               return `${month} ${year}`;
             })()}
           </Text>

@@ -97,12 +97,19 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
 
   deleteCategory: async (id) => {
     console.log("[useFinanceStore] deleteCategory() called with id:", id);
+    const hasTransactions = get().transactions.some((t) => t.categoryId === id);
+    if (hasTransactions) {
+      throw new Error(
+        "Cannot delete a category that has transactions. Reassign or delete the transactions first.",
+      );
+    }
     const prev = get().categories.find((c) => c.id === id);
     set((s) => ({ categories: s.categories.filter((c) => c.id !== id) }));
     try {
       await db.delete(catTable).where(eq(catTable.id, id));
     } catch {
       if (prev) set((s) => ({ categories: [...s.categories, prev] }));
+      throw new Error("Failed to delete category");
     }
   },
 

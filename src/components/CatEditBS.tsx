@@ -167,9 +167,17 @@ export default function CatEditBS({
         </Button>
         <Button
           colors={{ containerColor: "red", contentColor: "#FFFFFF" }}
-          onClick={() => {
-            useFinanceStore.getState().deleteCategory(catId);
-            setOpen(false);
+          onClick={async () => {
+            try {
+              await useFinanceStore.getState().deleteCategory(catId);
+              setOpen(false);
+            } catch (err) {
+              setWarning(
+                err instanceof Error
+                  ? err.message
+                  : "Failed to delete category",
+              );
+            }
           }}
         >
           <Text>Delete</Text>

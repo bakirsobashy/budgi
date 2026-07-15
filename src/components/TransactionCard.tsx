@@ -1,6 +1,11 @@
+import editIcon from "@expo/material-symbols/edit.xml";
+
 import { ICON_MAP } from "@/lib/icons";
 import { Spacer, Text } from "@expo/ui";
-import { Icon, OutlinedButton } from "@expo/ui/jetpack-compose";
+import {
+  Icon,
+  OutlinedButton,
+} from "@expo/ui/jetpack-compose";
 import {
   fillMaxWidth,
   height,
@@ -11,7 +16,6 @@ import {
 export default function TransactionCard({
   amount,
   category,
-  description,
   icon,
   color,
   type,
@@ -20,7 +24,6 @@ export default function TransactionCard({
 }: {
   amount?: number;
   category?: string;
-  description?: string;
   icon?: string | null;
   color?: string | null;
   type: "expense" | "income";
@@ -28,7 +31,10 @@ export default function TransactionCard({
   onEditPress: () => void;
 }) {
   return (
-    <OutlinedButton modifiers={[fillMaxWidth(1), height(50)]} onClick={onPress}>
+    <OutlinedButton
+      modifiers={[fillMaxWidth(1), height(50)]}
+      onClick={onPress}
+    >
       {icon ? (
         <Icon
           source={ICON_MAP[icon] || ICON_MAP["check"]}
@@ -53,7 +59,7 @@ export default function TransactionCard({
         contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
         onClick={onEditPress}
       >
-        <Icon source={require("@/assets/Icons/Pen.png")} size={16} />
+        <Icon source={editIcon} size={16} />
       </OutlinedButton>
     </OutlinedButton>
   );

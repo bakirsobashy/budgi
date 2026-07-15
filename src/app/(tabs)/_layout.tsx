@@ -1,9 +1,8 @@
-import category from "@expo/material-symbols/category.xml";
-import Home from "@expo/material-symbols/home.xml";
-
-import { Host, Icon } from "@expo/ui/jetpack-compose";
 import { Tabs } from "expo-router";
-import { View } from "react-native";
+import { Image } from "react-native";
+
+const HOME_ICON = require("@/assets/images/tabIcons/home.png");
+const CATEGORIES_ICON = require("@/assets/images/tabIcons/explore.png");
 
 export default function TabLayout() {
   return (
@@ -12,8 +11,6 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: "black",
         headerTintColor: "black",
-        // tabBarActiveBackgroundColor: "black",
-        // tabBarInactiveBackgroundColor: "rgb(30, 30, 30)",
       }}
     >
       <Tabs.Screen
@@ -21,11 +18,11 @@ export default function TabLayout() {
         options={{
           title: "Dashboard",
           tabBarIcon: ({ color, size }) => (
-            <View pointerEvents="none">
-              <Host matchContents>
-                <Icon source={Home} contentDescription="Home" />
-              </Host>
-            </View>
+            <Image
+              source={HOME_ICON}
+              style={{ width: size, height: size, tintColor: color }}
+              accessibilityLabel="Dashboard"
+            />
           ),
         }}
       />
@@ -34,11 +31,11 @@ export default function TabLayout() {
         options={{
           title: "Categories",
           tabBarIcon: ({ color, size }) => (
-            <View pointerEvents="none">
-              <Host matchContents>
-                <Icon source={category} contentDescription="Home" />
-              </Host>
-            </View>
+            <Image
+              source={CATEGORIES_ICON}
+              style={{ width: size, height: size, tintColor: color }}
+              accessibilityLabel="Categories"
+            />
           ),
         }}
       />

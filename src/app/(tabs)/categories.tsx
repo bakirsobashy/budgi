@@ -9,10 +9,11 @@ import { Box, Column, Host } from "@expo/ui/jetpack-compose";
 import {
   fillMaxSize,
   fillMaxWidth,
-  padding,
   paddingAll,
 } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Categories() {
   const categories = useFinanceStore((state) => state.categories);
@@ -20,52 +21,69 @@ export default function Categories() {
   const [isIncome, setIsIncome] = useState(true);
   const [open, setOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
+
   return (
-    <Host style={{ flex: 1 }}>
-      <Column>
-        <Column
-          modifiers={[fillMaxWidth(), padding(8, 40, 8, 0)]}
-          horizontalAlignment="center"
-        >
-          <IncomeTB isIncome={isIncome} setIsIncome={setIsIncome} />
-        </Column>
-        <Box modifiers={[fillMaxSize()]}>
-          <ScrollView>
-            <Column
-              verticalArrangement={{ spacedBy: 16 }}
-              modifiers={[fillMaxWidth(), paddingAll(16)]}
-            >
-              {categories
-                .filter((cat) => cat.type === (isIncome ? "income" : "expense"))
-                .map((cat) => {
-                  return (
-                    <CatCard
-                      key={cat.id}
-                      color={cat.color}
-                      name={cat.name}
-                      icon={cat.icon}
-                      onPress={() => {
-                        setOpen(true);
-                        setCatId(cat.id);
-                      }}
-                      onEditPress={() => {
-                        setOpen(true);
-                        setCatId(cat.id);
-                      }}
-                    />
-                  );
-                })}
-            </Column>
-          </ScrollView>
-          <AddCatButton onClick={() => setAddOpen(true)} />
-        </Box>
-      </Column>
-      <CatEditBS open={open} setOpen={setOpen} catId={catId || 0} />
-      <AddCatBS
-        open={addOpen}
-        setOpen={setAddOpen}
-        type={isIncome ? "income" : "expense"}
-      />
-    </Host>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.inner}>
+        <Host style={styles.host}>
+          <Column modifiers={[fillMaxSize()]}>
+            <IncomeTB isIncome={isIncome} setIsIncome={setIsIncome} />
+
+            <Box modifiers={[fillMaxSize()]}>
+              <ScrollView>
+                <Column
+                  verticalArrangement={{ spacedBy: 16 }}
+                  modifiers={[fillMaxWidth(), paddingAll(16)]}
+                >
+                  {categories
+                    .filter((cat) => cat.type === (isIncome ? "income" : "expense"))
+                    .map((cat) => {
+                      return (
+                        <CatCard
+                          key={cat.id}
+                          color={cat.color}
+                          name={cat.name}
+                          icon={cat.icon}
+                          onPress={() => {
+                            setOpen(true);
+                            setCatId(cat.id);
+                          }}
+                          onEditPress={() => {
+                            setOpen(true);
+                            setCatId(cat.id);
+                          }}
+                        />
+                      );
+                    })}
+                </Column>
+              </ScrollView>
+              <AddCatButton onClick={() => setAddOpen(true)} />
+            </Box>
+          </Column>
+
+          <CatEditBS open={open} setOpen={setOpen} catId={catId ?? 0} />
+          <AddCatBS
+            open={addOpen}
+            setOpen={setAddOpen}
+            type={isIncome ? "income" : "expense"}
+          />
+        </Host>
+      </View>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: "100%",
+  },
+  inner: {
+    flex: 1,
+    width: "100%",
+  },
+  host: {
+    flex: 1,
+    width: "100%",
+  },
+});

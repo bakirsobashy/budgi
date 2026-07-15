@@ -1,7 +1,9 @@
 CREATE TABLE `categories` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL UNIQUE,
-	`monthly_budget` real NOT NULL DEFAULT 0
+	`type` text NOT NULL,
+	`icon` text NOT NULL,
+	`color` text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `transactions` (

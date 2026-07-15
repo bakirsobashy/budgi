@@ -39,10 +39,12 @@ export default function TransEditBS({
 }) {
   const [transaction, setTransaction] = useState<TransactionInput>({
     type: selectedTransaction?.type || "expense",
-    amount: 0,
-    categoryId: 1,
-    date: new Date(),
-    description: "",
+    amount: selectedTransaction?.amount ?? 0,
+    categoryId: selectedTransaction?.categoryId ?? 1,
+    date: selectedTransaction?.date
+      ? new Date(selectedTransaction.date)
+      : new Date(),
+    description: selectedTransaction?.description || "",
   });
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [error, setError] = useState("");
@@ -55,8 +57,8 @@ export default function TransEditBS({
     if (!transaction.amount || transaction.amount <= 0) {
       return "Amount must be greater than 0";
     }
-    if (!transaction.categoryId || transaction.categoryId === 1) {
-      return "Please select a category other than Uncategorized";
+    if (!transaction.categoryId) {
+      return "Please select a category";
     }
     if (!transaction.date || isNaN(transaction.date.getTime())) {
       return "Please select a valid date";
@@ -138,15 +140,18 @@ export default function TransEditBS({
             />
           )}
         </Row>
-        {error ? <Text style={{ color: "red" }}>{error}</Text> : null}
+        {error ? <Text textStyle={{ color: "red" }}>{error}</Text> : null}
         <Row>
           <Button
             colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
             onClick={() => {
-              // Update transaction in store
+              if (!selectedTransaction?.id) {
+                setError("No transaction selected");
+                return;
+              }
               useFinanceStore
                 .getState()
-                .deleteTransaction(selectedTransaction?.id as number);
+                .deleteTransaction(selectedTransaction.id);
               setShowBottomSheet(false);
             }}
           >
@@ -161,14 +166,15 @@ export default function TransEditBS({
                 setError(validationError);
                 return;
               }
+              if (!selectedTransaction?.id) {
+                setError("No transaction selected");
+                return;
+              }
               setError("");
-              // Update transaction in store
-              useFinanceStore
-                .getState()
-                .updateTransaction(selectedTransaction?.id as number, {
-                  ...transaction,
-                  date: transaction.date.toISOString(),
-                });
+              useFinanceStore.getState().updateTransaction(selectedTransaction.id, {
+                ...transaction,
+                date: transaction.date.toISOString(),
+              });
               setShowBottomSheet(false);
               setShowDatePicker(false);
             }}
