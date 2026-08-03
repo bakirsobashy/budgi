@@ -125,7 +125,7 @@ export function JSMonthPicker({
   );
 }
 
-export default function SingleChoiceExample({
+export default function MonthSelector({
   selectedMonth,
   onMonthChange,
   onOpenPicker,

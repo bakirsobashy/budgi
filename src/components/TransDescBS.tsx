@@ -21,7 +21,8 @@ export default function TransDescBS({
     (c) => c.id === selectedTransaction?.categoryId,
   );
 
-  const amount = selectedTransaction?.amount ?? 0;
+  const amountCents = selectedTransaction?.amount ?? 0;
+  const amount = amountCents / 100;
   const type = selectedTransaction?.type ?? "expense";
   const date = selectedTransaction?.date
     ? new Date(selectedTransaction.date).toLocaleDateString()

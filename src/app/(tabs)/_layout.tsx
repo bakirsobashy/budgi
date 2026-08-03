@@ -3,6 +3,7 @@ import { Image } from "react-native";
 
 const HOME_ICON = require("@/assets/images/tabIcons/home.png");
 const CATEGORIES_ICON = require("@/assets/images/tabIcons/explore.png");
+const BUDGET_ICON = require("@/assets/images/tabIcons/explore.png");
 
 export default function TabLayout() {
   return (
@@ -35,6 +36,19 @@ export default function TabLayout() {
               source={CATEGORIES_ICON}
               style={{ width: size, height: size, tintColor: color }}
               accessibilityLabel="Categories"
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="budget"
+        options={{
+          title: "Budget",
+          tabBarIcon: ({ color, size }) => (
+            <Image
+              source={BUDGET_ICON}
+              style={{ width: size, height: size, tintColor: color }}
+              accessibilityLabel="Budget"
             />
           ),
         }}

@@ -1,5 +1,9 @@
 import { Spacer } from "@expo/ui";
 import { OutlinedButton, Row, Text } from "@expo/ui/jetpack-compose";
+
+// Two-segment toggle. The currently active segment is highlighted (black bg,
+// white text); the inactive one is transparent with black text. Pressing the
+// inactive segment switches to it.
 export default function IncomeTB({
   isIncome,
   setIsIncome,
@@ -11,14 +15,24 @@ export default function IncomeTB({
     <Row>
       <Spacer flexible />
       <OutlinedButton
-        onClick={() => setIsIncome(!isIncome)}
+        onClick={() => setIsIncome(true)}
         colors={
           isIncome
-            ? { containerColor: "transparent", contentColor: "black" }
-            : { containerColor: "black", contentColor: "white" }
+            ? { containerColor: "black", contentColor: "white" }
+            : { containerColor: "transparent", contentColor: "black" }
         }
       >
-        <Text>{isIncome ? "income" : "expense"}</Text>
+        <Text>Income</Text>
+      </OutlinedButton>
+      <OutlinedButton
+        onClick={() => setIsIncome(false)}
+        colors={
+          !isIncome
+            ? { containerColor: "black", contentColor: "white" }
+            : { containerColor: "transparent", contentColor: "black" }
+        }
+      >
+        <Text>Expense</Text>
       </OutlinedButton>
       <Spacer flexible />
     </Row>

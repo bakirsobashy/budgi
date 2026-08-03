@@ -1,12 +1,26 @@
 import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
 
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import { Image } from "expo-image";
 import { useEffect, useState } from "react";
-import { Text } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { db } from "../db/client";
 import { seedCategories } from "../db/seed";
 import migrations from "../drizzle/migrations";
 import { useFinanceStore } from "../store/useFinanceStore";
+
+// Keep the native splash (white screen) visible while we render our own
+// white React view with the animated GIF centered, so the transition from
+// native splash → React splash is seamless.
+try {
+  void SplashScreen.preventAutoHideAsync();
+} catch {
+  /* In some environments (e.g. Expo Go) this can reject; safe to ignore. */
+}
+
+const ANIMATION = require("@/assets/Icons/animation.gif");
 
 export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations);
@@ -25,17 +39,55 @@ export default function RootLayout() {
     }
   }, [success, hydrate]);
 
+  // The native splash and the React splash below are both a white background,
+  // so we can hide the native splash as soon as React has mounted — the user
+  // sees a seamless white screen with the centered animated GIF that keeps
+  // playing until the DB is migrated, seeded, and the store is hydrated.
+  useEffect(() => {
+    SplashScreen.hideAsync().catch(() => {});
+  }, []);
+
   if (error) return <Text>Migration error: {error.message}</Text>;
   if (seedError) return <Text>Setup error: {seedError.message}</Text>;
-  if (!success || !isHydrated) return <Text>Loading…</Text>;
+
+  // Show the React splash (white screen + centered animated GIF) until the
+  // DB is migrated, seeded, and the store is hydrated.
+  if (!success || !isHydrated) {
+    return (
+      <View style={styles.splash}>
+        <Image
+          source={ANIMATION}
+          style={styles.splashImage}
+          contentFit="contain"
+        />
+      </View>
+    );
+  }
+
   return (
-    <Stack>
-      <Stack.Screen
-        name="(tabs)"
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Stack>
+    <>
+      <StatusBar style="dark" />
+      <Stack>
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  splash: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  splashImage: {
+    width: 100,
+    height: 100,
+  },
+});

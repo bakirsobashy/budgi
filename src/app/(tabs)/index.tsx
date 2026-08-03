@@ -1,5 +1,5 @@
 import AddButton from "@/components/AddButton";
-import AddTransactionButtomSheet from "@/components/AddTransactionButtomSheet";
+import AddTransactionBottomSheet from "@/components/AddTransactionBottomSheet";
 import MonthSelector, { JSMonthPicker } from "@/components/MonthSelector";
 import TransactionCard from "@/components/TransactionCard";
 import TransDescBS from "@/components/TransDescBS";
@@ -42,13 +42,17 @@ const Index = () => {
       new Date(tx.date).getFullYear() === selectedMonth.getFullYear() &&
       new Date(tx.date).getMonth() === selectedMonth.getMonth(),
   );
-  const income = monthTxs
+  // Amounts are stored in cents; sum in cents then convert to dollars for display.
+  const incomeCents = monthTxs
     .filter((tx) => tx.type === "income")
     .reduce((sum, tx) => sum + tx.amount, 0);
-  const expense = monthTxs
+  const expenseCents = monthTxs
     .filter((tx) => tx.type === "expense")
     .reduce((sum, tx) => sum + tx.amount, 0);
-  const total = income - expense;
+  const totalCents = incomeCents - expenseCents;
+  const income = incomeCents / 100;
+  const expense = expenseCents / 100;
+  const total = totalCents / 100;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -110,23 +114,23 @@ const Index = () => {
                             const category = categories.find(
                               (c) => c.id === tx.categoryId,
                             );
-                            return (
-                              <TransactionCard
-                                key={tx.id}
-                                amount={tx.amount}
-                                category={category?.name}
-                                color={category?.color}
-                                icon={category?.icon}
-                                type={tx.type}
-                                onPress={() => {
-                                  setSelectedTransaction(tx);
-                                  setShowDescButtomSheet(true);
-                                }}
-                                onEditPress={() => {
-                                  setSelectedTransaction(tx);
-                                  setShowEditButtomSheet(true);
-                                }}
-                              />
+                              return (
+                                <TransactionCard
+                                  key={tx.id}
+                                  amount={tx.amount / 100}
+                                  category={category?.name}
+                                  color={category?.color}
+                                  icon={category?.icon}
+                                  type={tx.type}
+                                  onPress={() => {
+                                    setSelectedTransaction(tx);
+                                    setShowDescButtomSheet(true);
+                                  }}
+                                  onEditPress={() => {
+                                    setSelectedTransaction(tx);
+                                    setShowEditButtomSheet(true);
+                                  }}
+                                />
                             );
                           })}
                         </Column>
@@ -136,18 +140,17 @@ const Index = () => {
               </ScrollView>
               <AddButton
                 onClick={(type) => {
-                  setShowAddButtomSheet(true);
                   setType(type);
+                  setShowAddButtomSheet(true);
                 }}
               />
             </Box>
           </Column>
 
-          <AddTransactionButtomSheet
+          <AddTransactionBottomSheet
             showAddButtomSheet={showAddButtomSheet}
             setShowAddButtomSheet={setShowAddButtomSheet}
             type={type}
-            setType={setType}
           />
           <TransDescBS
             showBottomSheet={showDescButtomSheet}

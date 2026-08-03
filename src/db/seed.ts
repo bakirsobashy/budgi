@@ -4,7 +4,8 @@ import { db } from "./client";
 import { categories, transactions } from "./schema";
 
 const DEFAULT_CATEGORIES: NewCategory[] = [
-  { name: "Groceries", type: "expense", color: "red", icon: "add" },
+  { name: "Groceries", type: "expense", color: "#4CAF50", icon: "grocery" },
+  { name: "Salary", type: "income", color: "#4CAF50", icon: "money" },
 ];
 
 export async function seedCategories() {
@@ -21,5 +22,4 @@ export async function seedCategories() {
   if (catTotal === 0 && txTotal === 0) {
     await db.insert(categories).values(DEFAULT_CATEGORIES);
   }
-  console.log("Categories seeded successfully");
 }

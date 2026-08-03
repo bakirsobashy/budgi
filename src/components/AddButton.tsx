@@ -8,9 +8,9 @@ import {
 import { align, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
 
-import add from "@expo/material-symbols/add.xml";
-import income from "@expo/material-symbols/payments.xml";
-import expense from "@expo/material-symbols/remove.xml";
+const FAB_ICON = { uri: "ic_add" };
+const INCOME_ICON = { uri: "ic_money" };
+const EXPENSE_ICON = { uri: "ic_local_shipping" };
 
 export default function AddButton({
   onClick,
@@ -21,6 +21,7 @@ export default function AddButton({
   return (
     <DropdownMenu
       expanded={showDropdownMenu}
+      onDismissRequest={() => setShowDropdownMenu(false)}
       modifiers={[align("bottomEnd"), paddingAll(16)]}
       color="black"
     >
@@ -32,7 +33,7 @@ export default function AddButton({
           containerColor="black"
         >
           <FloatingActionButton.Icon>
-            <Icon source={add} tint={"#FFFFFF"} />
+            <Icon source={FAB_ICON} tint={"#FFFFFF"} />
           </FloatingActionButton.Icon>
         </FloatingActionButton>
       </DropdownMenu.Trigger>
@@ -44,7 +45,7 @@ export default function AddButton({
           }}
         >
           <DropdownMenuItem.LeadingIcon>
-            <Icon source={income} tint={"#FFFFFF"} />
+            <Icon source={INCOME_ICON} tint={"#FFFFFF"} />
           </DropdownMenuItem.LeadingIcon>
           <DropdownMenuItem.Text>
             <Text color="white">Income</Text>
@@ -57,7 +58,7 @@ export default function AddButton({
           }}
         >
           <DropdownMenuItem.LeadingIcon>
-            <Icon source={expense} tint={"#FFFFFF"} />
+            <Icon source={EXPENSE_ICON} tint={"#FFFFFF"} />
           </DropdownMenuItem.LeadingIcon>
           <DropdownMenuItem.Text>
             <Text color="white">Expense</Text>

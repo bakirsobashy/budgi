@@ -23,11 +23,20 @@ import CatSelectDM from "./CatSelectDM";
 
 type TransactionInput = {
   type: "expense" | "income";
-  amount: number;
+  amount: number; // cents
   categoryId: number;
   date: Date;
   description: string;
 };
+
+const toCents = (value: number | string): number => {
+  const n = typeof value === "string" ? Number(value) : value;
+  if (!Number.isFinite(n)) return 0;
+  return Math.round(n * 100);
+};
+
+const fromCents = (cents: number): string => (cents / 100).toString();
+
 export default function TransEditBS({
   showBottomSheet,
   setShowBottomSheet,
@@ -40,7 +49,7 @@ export default function TransEditBS({
   const [transaction, setTransaction] = useState<TransactionInput>({
     type: selectedTransaction?.type || "expense",
     amount: selectedTransaction?.amount ?? 0,
-    categoryId: selectedTransaction?.categoryId ?? 1,
+    categoryId: selectedTransaction?.categoryId ?? 0,
     date: selectedTransaction?.date
       ? new Date(selectedTransaction.date)
       : new Date(),
@@ -48,6 +57,7 @@ export default function TransEditBS({
   });
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const categories = useFinanceStore((state) => state.categories).filter(
     (c) => c.type === transaction.type,
@@ -81,10 +91,10 @@ export default function TransEditBS({
           <TextInput
             modifiers={[fillMaxWidth(0.5)]}
             placeholder="Amount"
-            defaultValue={transaction.amount.toString()}
+            defaultValue={fromCents(transaction.amount)}
             keyboardType="numeric"
             onChangeText={(text) =>
-              setTransaction({ ...transaction, amount: Number(text) })
+              setTransaction({ ...transaction, amount: toCents(text) })
             }
           />
         </Row>
@@ -143,16 +153,27 @@ export default function TransEditBS({
         {error ? <Text textStyle={{ color: "red" }}>{error}</Text> : null}
         <Row>
           <Button
-            colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
-            onClick={() => {
+            colors={{ containerColor: "red", contentColor: "#FFFFFF" }}
+            onClick={async () => {
               if (!selectedTransaction?.id) {
                 setError("No transaction selected");
                 return;
               }
-              useFinanceStore
-                .getState()
-                .deleteTransaction(selectedTransaction.id);
-              setShowBottomSheet(false);
+              setSubmitting(true);
+              try {
+                await useFinanceStore
+                  .getState()
+                  .deleteTransaction(selectedTransaction.id);
+                setShowBottomSheet(false);
+              } catch (e) {
+                setError(
+                  e instanceof Error
+                    ? e.message
+                    : "Failed to delete transaction",
+                );
+              } finally {
+                setSubmitting(false);
+              }
             }}
           >
             <Text>Delete</Text>
@@ -160,7 +181,7 @@ export default function TransEditBS({
           <Spacer flexible />
           <Button
             colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
-            onClick={() => {
+            onClick={async () => {
               const validationError = validate();
               if (validationError) {
                 setError(validationError);
@@ -171,15 +192,31 @@ export default function TransEditBS({
                 return;
               }
               setError("");
-              useFinanceStore.getState().updateTransaction(selectedTransaction.id, {
-                ...transaction,
-                date: transaction.date.toISOString(),
-              });
-              setShowBottomSheet(false);
-              setShowDatePicker(false);
+              setSubmitting(true);
+              try {
+                await useFinanceStore
+                  .getState()
+                  .updateTransaction(selectedTransaction.id, {
+                    amount: transaction.amount,
+                    type: transaction.type,
+                    categoryId: transaction.categoryId,
+                    date: transaction.date.toISOString(),
+                    description: transaction.description,
+                  });
+                setShowBottomSheet(false);
+                setShowDatePicker(false);
+              } catch (e) {
+                setError(
+                  e instanceof Error
+                    ? e.message
+                    : "Failed to update transaction",
+                );
+              } finally {
+                setSubmitting(false);
+              }
             }}
           >
-            <Text>Done</Text>
+            <Text>{submitting ? "Saving..." : "Done"}</Text>
           </Button>
         </Row>
       </Column>

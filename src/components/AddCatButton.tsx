@@ -1,6 +1,7 @@
-import add from "@expo/material-symbols/add.xml";
 import { FloatingActionButton, Icon } from "@expo/ui/jetpack-compose";
 import { align, offset } from "@expo/ui/jetpack-compose/modifiers";
+
+const ADD_ICON = { uri: "ic_add" };
 
 export default function AddCatButton({ onClick }: { onClick: () => void }) {
   return (
@@ -10,7 +11,7 @@ export default function AddCatButton({ onClick }: { onClick: () => void }) {
       containerColor={"black"}
     >
       <FloatingActionButton.Icon>
-        <Icon source={add} tint={"#FFFFFF"} />
+        <Icon source={ADD_ICON} tint={"#FFFFFF"} />
       </FloatingActionButton.Icon>
     </FloatingActionButton>
   );

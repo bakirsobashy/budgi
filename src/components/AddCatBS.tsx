@@ -19,17 +19,134 @@ import {
   Shapes,
   size,
 } from "@expo/ui/jetpack-compose/modifiers";
-import { useState } from "react";
+import { memo, useState } from "react";
 
 import { ICON_MAP, ICON_NAMES } from "@/lib/icons";
 
-const colors = ["#6200EE", "#03DAC5", "#FF5722", "#4CAF50", "#2196F3"];
+const colors = [
+  "#F44336",
+  "#E91E63",
+  "#9C27B0",
+  "#673AB7",
+  "#3F51B5",
+  "#2196F3",
+  "#03A9F4",
+  "#00BCD4",
+  "#009688",
+  "#4CAF50",
+  "#8BC34A",
+  "#CDDC39",
+  "#FFEB3B",
+  "#FFC107",
+  "#FF9800",
+  "#FF5722",
+  "#795548",
+  "#9E9E9E",
+  "#607D8B",
+  "#000000",
+  "#F06292",
+  "#BA68C8",
+  "#9575CD",
+  "#7986CB",
+  "#64B5F6",
+  "#4DD0E1",
+  "#4DB6AC",
+  "#81C784",
+  "#AED581",
+  "#FFB74D",
+  "#FF8A65",
+  "#A1887F",
+  "#BDBDBD",
+  "#78909C",
+  "#EF5350",
+  "#EC407A",
+  "#AB47BC",
+  "#7E57C2",
+  "#5C6BC0",
+  "#42A5F5",
+  "#26C6DA",
+  "#26A69A",
+  "#66BB6A",
+  "#9CCC65",
+  "#D4E157",
+  "#FFEE58",
+  "#FFCA28",
+  "#FFA726",
+  "#FF7043",
+  "#8D6E63",
+];
+
 type CatInput = {
   name: string;
   icon: string;
   color: string;
 };
-export default function AddCatButton({
+
+// Memoized color picker — only re-renders when `selectedColor` changes, so
+// typing in the name field above doesn't re-instantiate all 50 buttons.
+const ColorPicker = memo(function ColorPicker({
+  selectedColor,
+  onSelect,
+}: {
+  selectedColor: string;
+  onSelect: (color: string) => void;
+}) {
+  return (
+    <ScrollView direction="horizontal">
+      <Row spacing={8}>
+        {colors.map((color, i) => (
+          <Button
+            onClick={() => onSelect(color)}
+            key={i}
+            colors={{ containerColor: colors[i] }}
+            modifiers={[size(40, 40)]}
+            contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
+          >
+            {selectedColor === color ? (
+              <Icon source={ICON_MAP["check"]} size={24} />
+            ) : null}
+          </Button>
+        ))}
+      </Row>
+    </ScrollView>
+  );
+});
+
+// Memoized icon picker — only re-renders when `selectedColor` or
+// `selectedIcon` changes (for tint), not on every keystroke in the name field.
+// Selected icon is tinted with the chosen color; all others render in black
+// (no tint applied) as the user requested.
+const IconPicker = memo(function IconPicker({
+  selectedIcon,
+  selectedColor,
+  onSelect,
+}: {
+  selectedIcon: string;
+  selectedColor: string;
+  onSelect: (iconName: string) => void;
+}) {
+  return (
+    <ScrollView direction="horizontal">
+      <Row spacing={8}>
+        {ICON_NAMES.map((iconName, i) => (
+          <OutlinedButton
+            onClick={() => onSelect(iconName)}
+            key={i}
+            modifiers={[size(40, 40)]}
+            contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
+          >
+            <Icon
+              source={ICON_MAP[iconName]}
+              tint={selectedIcon === iconName ? selectedColor : null}
+            />
+          </OutlinedButton>
+        ))}
+      </Row>
+    </ScrollView>
+  );
+});
+
+export default function AddCatBottomSheet({
   open,
   setOpen,
   type,
@@ -44,6 +161,7 @@ export default function AddCatButton({
     icon: ICON_NAMES[0],
   });
   const [warning, setWarning] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const validate = () => {
     if (!Cat.name.trim()) {
@@ -82,86 +200,46 @@ export default function AddCatButton({
           </BasicTextField.DecorationBox>
         </BasicTextField>
         <Text>color:</Text>
-        <ScrollView direction="horizontal">
-          <Row spacing={8}>
-            {colors.map((color, i) =>
-              Cat.color === color ? (
-                <Button
-                  onClick={() => {
-                    setCat({ ...Cat, color: color });
-                  }}
-                  key={i}
-                  colors={{ containerColor: colors[i] }}
-                  modifiers={[size(40, 40)]}
-                  contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
-                >
-                  <Icon source={ICON_MAP["check"]} size={24}></Icon>
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => {
-                    setCat({ ...Cat, color: colors[i] });
-                  }}
-                  key={i}
-                  colors={{ containerColor: colors[i] }}
-                  modifiers={[size(40, 40)]}
-                >
-                  <Icon source={ICON_MAP["check"]} size={24}></Icon>
-                </Button>
-              ),
-            )}
-          </Row>
-        </ScrollView>
+        <ColorPicker
+          selectedColor={Cat.color}
+          onSelect={(color) => setCat((c) => ({ ...c, color }))}
+        />
         <Text>Icon:</Text>
-        <ScrollView direction="horizontal">
-          <Row spacing={8}>
-            {ICON_NAMES.map((iconName, i) =>
-              Cat.icon === iconName ? (
-                <OutlinedButton
-                  onClick={() => {
-                    setCat({ ...Cat, icon: iconName });
-                  }}
-                  key={i}
-                  modifiers={[size(40, 40)]}
-                  contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
-                >
-                  <Icon source={ICON_MAP[iconName]} tint={Cat.color} />
-                </OutlinedButton>
-              ) : (
-                <OutlinedButton
-                  onClick={() => {
-                    setCat({ ...Cat, icon: iconName });
-                  }}
-                  key={i}
-                  modifiers={[size(40, 40)]}
-                  contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
-                >
-                  <Icon source={ICON_MAP[iconName]} />
-                </OutlinedButton>
-              ),
-            )}
-          </Row>
-        </ScrollView>
+        <IconPicker
+          selectedIcon={Cat.icon}
+          selectedColor={Cat.color}
+          onSelect={(iconName) => setCat((c) => ({ ...c, icon: iconName }))}
+        />
         {warning ? <Text color="red">{warning}</Text> : null}
         <Button
           colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
-          onClick={() => {
+          onClick={async () => {
             const validationWarning = validate();
             if (validationWarning) {
               setWarning(validationWarning);
               return;
             }
             setWarning("");
-            useFinanceStore.getState().addCategory({
-              name: Cat.name,
-              type,
-              icon: Cat.icon,
-              color: Cat.color,
-            });
-            setOpen(false);
+            setSubmitting(true);
+            try {
+              await useFinanceStore.getState().addCategory({
+                name: Cat.name,
+                type,
+                icon: Cat.icon,
+                color: Cat.color,
+              });
+              setCat({ name: "", color: colors[0], icon: ICON_NAMES[0] });
+              setOpen(false);
+            } catch (e) {
+              setWarning(
+                e instanceof Error ? e.message : "Failed to add category",
+              );
+            } finally {
+              setSubmitting(false);
+            }
           }}
         >
-          <Text>Add</Text>
+          <Text>{submitting ? "Adding..." : "Add"}</Text>
         </Button>
       </Column>
     </ModalBottomSheet>

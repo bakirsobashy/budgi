@@ -1,1 +1,0 @@
--- No-op: categories now includes icon and color columns from the initial migration.

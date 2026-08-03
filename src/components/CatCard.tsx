@@ -10,9 +10,9 @@ import {
   size,
 } from "@expo/ui/jetpack-compose/modifiers";
 
-import editIcon from "@expo/material-symbols/edit.xml";
+import { getIconSource } from "@/lib/icons";
 
-import { ICON_MAP } from "@/lib/icons";
+const EDIT_ICON = { uri: "ic_edit" };
 
 export default function CatCard({
   icon,
@@ -33,7 +33,7 @@ export default function CatCard({
       onClick={onPress}
     >
       <Icon
-        source={ICON_MAP[icon] || ICON_MAP["check"]}
+        source={getIconSource(icon)}
         size={24}
         tint={color}
       />
@@ -45,7 +45,7 @@ export default function CatCard({
         contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
         onClick={onEditPress}
       >
-        <Icon source={editIcon} size={16} />
+        <Icon source={EDIT_ICON} size={16} />
       </OutlinedButton>
     </OutlinedButton>
   );

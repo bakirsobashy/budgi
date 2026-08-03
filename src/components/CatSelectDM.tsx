@@ -8,7 +8,7 @@ import {
 } from "@expo/ui/jetpack-compose";
 import { useState } from "react";
 
-import { ICON_MAP } from "@/lib/icons";
+import { getIconSource } from "@/lib/icons";
 
 export default function CatSelectDM({
   categories,
@@ -27,7 +27,7 @@ export default function CatSelectDM({
       <DropdownMenu.Trigger>
         <OutlinedButton onClick={() => setIsExpanded(true)}>
           <Icon
-            source={ICON_MAP[selCat?.icon || "check"]}
+            source={getIconSource(selCat?.icon || "")}
             size={24}
             tint={selCat?.color || undefined}
           />
@@ -55,7 +55,7 @@ export default function CatSelectDM({
             </DropdownMenuItem.Text>
             <DropdownMenuItem.LeadingIcon>
               <Icon
-                source={ICON_MAP[cat.icon] || ICON_MAP["check"]}
+                source={getIconSource(cat.icon)}
                 size={24}
                 tint={cat.color || undefined}
               />

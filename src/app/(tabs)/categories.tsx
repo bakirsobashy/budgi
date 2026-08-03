@@ -1,6 +1,7 @@
 import AddCatBS from "@/components/AddCatBS";
 import AddCatButton from "@/components/AddCatButton";
 import CatCard from "@/components/CatCard";
+import CatDescBS from "@/components/CatDescBS";
 import CatEditBS from "@/components/CatEditBS";
 import IncomeTB from "@/components/IncomeTB";
 import { useFinanceStore } from "@/store/useFinanceStore";
@@ -20,6 +21,7 @@ export default function Categories() {
   const [catId, setCatId] = useState<number | null>(null);
   const [isIncome, setIsIncome] = useState(true);
   const [open, setOpen] = useState(false);
+  const [descOpen, setDescOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
 
   return (
@@ -45,12 +47,12 @@ export default function Categories() {
                           name={cat.name}
                           icon={cat.icon}
                           onPress={() => {
-                            setOpen(true);
                             setCatId(cat.id);
+                            setDescOpen(true);
                           }}
                           onEditPress={() => {
-                            setOpen(true);
                             setCatId(cat.id);
+                            setOpen(true);
                           }}
                         />
                       );
@@ -61,7 +63,17 @@ export default function Categories() {
             </Box>
           </Column>
 
-          <CatEditBS open={open} setOpen={setOpen} catId={catId ?? 0} />
+          <CatDescBS
+            showBottomSheet={descOpen}
+            setShowBottomSheet={setDescOpen}
+            catId={catId ?? 0}
+          />
+          <CatEditBS
+            key={catId ?? 0}
+            open={open}
+            setOpen={setOpen}
+            catId={catId ?? 0}
+          />
           <AddCatBS
             open={addOpen}
             setOpen={setAddOpen}

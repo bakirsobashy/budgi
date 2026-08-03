@@ -1,6 +1,4 @@
-import editIcon from "@expo/material-symbols/edit.xml";
-
-import { ICON_MAP } from "@/lib/icons";
+import { getIconSource } from "@/lib/icons";
 import { Spacer, Text } from "@expo/ui";
 import {
   Icon,
@@ -12,6 +10,8 @@ import {
   offset,
   size,
 } from "@expo/ui/jetpack-compose/modifiers";
+
+const EDIT_ICON = { uri: "ic_edit" };
 
 export default function TransactionCard({
   amount,
@@ -30,6 +30,7 @@ export default function TransactionCard({
   onPress: () => void;
   onEditPress: () => void;
 }) {
+  const displayAmount = amount ?? 0;
   return (
     <OutlinedButton
       modifiers={[fillMaxWidth(1), height(50)]}
@@ -37,7 +38,7 @@ export default function TransactionCard({
     >
       {icon ? (
         <Icon
-          source={ICON_MAP[icon] || ICON_MAP["check"]}
+          source={getIconSource(icon || "")}
           size={24}
           tint={color || undefined}
         />
@@ -52,14 +53,14 @@ export default function TransactionCard({
       <Text
         textStyle={type === "income" ? { color: "green" } : { color: "red" }}
       >
-        {`${type === "income" ? "+" : "-"}$${amount?.toFixed(2) ?? "0.00"}`}
+        {`${type === "income" ? "+" : "-"}$${displayAmount.toFixed(2)}`}
       </Text>
       <OutlinedButton
         modifiers={[size(30, 30), offset(10, 0)]}
         contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
         onClick={onEditPress}
       >
-        <Icon source={editIcon} size={16} />
+        <Icon source={EDIT_ICON} size={16} />
       </OutlinedButton>
     </OutlinedButton>
   );

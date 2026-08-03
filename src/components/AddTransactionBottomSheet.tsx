@@ -13,7 +13,7 @@ import { useState } from "react";
 import CatSelectDM from "./CatSelectDM";
 
 type TransactionInput = {
-  amount: number;
+  amount: number; // cents
   categoryId: number;
   date: Date;
   description: string;
@@ -21,12 +21,12 @@ type TransactionInput = {
 
 const EMPTY_FORM: TransactionInput = {
   amount: 0,
-  categoryId: 1,
+  categoryId: 0,
   date: new Date(),
   description: "",
 };
 
-export default function AddTransactionButtomSheet({
+export default function AddTransactionBottomSheet({
   showAddButtomSheet,
   setShowAddButtomSheet,
   type,
@@ -34,12 +34,29 @@ export default function AddTransactionButtomSheet({
   showAddButtomSheet: boolean;
   setShowAddButtomSheet: (showAddButtomSheet: boolean) => void;
   type: "expense" | "income";
-  setType: (type: "expense" | "income") => void;
 }) {
-  const [transaction, setTransaction] = useState<TransactionInput>(EMPTY_FORM);
+  // Local form state. We reset it in `onDismiss` (an event handler, not an
+  // effect) so the form is fresh the next time the sheet opens, without
+  // remounting the component (which would break the native sheet's dismiss
+  // gesture/overlay wiring).
+  const [transaction, setTransaction] = useState<TransactionInput>({
+    ...EMPTY_FORM,
+    date: new Date(),
+  });
   const amountState = useNativeState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const resetForm = () => {
+    setTransaction({ ...EMPTY_FORM, date: new Date() });
+    // ObservableState is intentionally mutable shared state.
+    // eslint-disable-next-line react-hooks/immutability
+    amountState.value = "";
+    setError("");
+    setShowDatePicker(false);
+    setSubmitting(false);
+  };
 
   const categories = useFinanceStore((state) => state.categories).filter(
     (c) => c.type === type,
@@ -62,7 +79,8 @@ export default function AddTransactionButtomSheet({
     // ObservableState is intentionally mutable shared state.
     // eslint-disable-next-line react-hooks/immutability
     amountState.value = text;
-    const parsed = text === "" ? 0 : Number(text);
+    // Parse the user-entered dollars into integer cents.
+    const parsed = text === "" ? 0 : Math.round(Number(text) * 100);
     setTransaction((prev) => ({
       ...prev,
       amount: Number.isFinite(parsed) ? parsed : 0,
@@ -72,7 +90,10 @@ export default function AddTransactionButtomSheet({
   return (
     <BottomSheet
       isPresented={showAddButtomSheet}
-      onDismiss={() => setShowAddButtomSheet(false)}
+      onDismiss={() => {
+        setShowAddButtomSheet(false);
+        resetForm();
+      }}
     >
       <Column
         verticalArrangement={{ spacedBy: 16 }}
@@ -140,28 +161,38 @@ export default function AddTransactionButtomSheet({
         {error ? <Text textStyle={{ color: "red" }}>{error}</Text> : null}
         <Button
           colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
-          onClick={() => {
+          onClick={async () => {
             const validationError = validate();
             if (validationError) {
               setError(validationError);
               return;
             }
             setError("");
-            useFinanceStore.getState().addTransaction({
-              ...transaction,
-              type,
-              date: transaction.date.toISOString(),
-            });
-            // Reset form
-            setTransaction(EMPTY_FORM);
-            // ObservableState is intentionally mutable shared state.
-            // eslint-disable-next-line react-hooks/immutability
-            amountState.value = "";
-            setShowAddButtomSheet(false);
-            setShowDatePicker(false);
+            setSubmitting(true);
+            try {
+              await useFinanceStore.getState().addTransaction({
+                amount: transaction.amount,
+                type,
+                date: transaction.date.toISOString(),
+                categoryId: transaction.categoryId,
+                description: transaction.description,
+              });
+              setTransaction({ ...EMPTY_FORM, date: new Date() });
+              // ObservableState is intentionally mutable shared state.
+              // eslint-disable-next-line react-hooks/immutability
+              amountState.value = "";
+              setShowAddButtomSheet(false);
+              setShowDatePicker(false);
+            } catch (e) {
+              setError(
+                e instanceof Error ? e.message : "Failed to add transaction",
+              );
+            } finally {
+              setSubmitting(false);
+            }
           }}
         >
-          <Text>Add Transaction</Text>
+          <Text>{submitting ? "Adding..." : "Add Transaction"}</Text>
         </Button>
       </Column>
     </BottomSheet>
