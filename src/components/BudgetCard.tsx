@@ -9,9 +9,9 @@ import {
 } from "@expo/ui/jetpack-compose";
 import {
   align,
+  alpha,
   fillMaxWidth,
   height,
-  size,
 } from "@expo/ui/jetpack-compose/modifiers";
 
 const fmt = (cents: number) => `$${(cents / 100).toFixed(2)}`;
@@ -90,10 +90,11 @@ export default function BudgetCard({
           </Text>
         </Column>
         <OutlinedButton
+          colors={{ containerColor: "#6200EE" }}
           onClick={onPress}
-          modifiers={[size(352 * percentage, 70)]}
+          modifiers={[fillMaxWidth(percentage), height(70), alpha(0.3)]}
         >
-          <Text color="#000000" style={outlinedText} maxLines={1}></Text>
+          <Text></Text>
         </OutlinedButton>
       </Box>
     </OutlinedButton>
