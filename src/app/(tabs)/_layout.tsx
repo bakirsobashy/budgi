@@ -3,7 +3,7 @@ import { Image } from "react-native";
 
 const HOME_ICON = require("@/assets/images/tabIcons/home.png");
 const CATEGORIES_ICON = require("@/assets/images/tabIcons/explore.png");
-const BUDGET_ICON = require("@/assets/images/tabIcons/explore.png");
+const BUDGET_ICON = require("@/assets/images/tabIcons/budget.png");
 
 export default function TabLayout() {
   return (

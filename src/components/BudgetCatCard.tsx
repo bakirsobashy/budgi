@@ -1,26 +1,31 @@
 import { getIconSource } from "@/lib/icons";
-import { Spacer, Text } from "@expo/ui";
-import { Box, Icon, Row } from "@expo/ui/jetpack-compose";
+import {
+  Box,
+  Icon,
+  OutlinedButton,
+  Shape,
+  Text,
+} from "@expo/ui/jetpack-compose";
 import {
   background,
-  border,
-  clip,
-  clickable,
   fillMaxHeight,
   fillMaxWidth,
-  paddingAll,
-  Shapes,
+  height,
+  size,
+  weight,
+  width,
 } from "@expo/ui/jetpack-compose/modifiers";
 
-function fillColor(percentage: number): string {
-  const t = Math.min(Math.max(percentage, 0), 1);
-  const r = Math.round(33 + (244 - 33) * t);
-  const g = Math.round(150 + (67 - 150) * t);
-  const b = Math.round(243 + (54 - 243) * t);
-  return `rgb(${r}, ${g}, ${b})`;
-}
-
 const fmt = (cents: number) => `$${(cents / 100).toFixed(2)}`;
+
+const outlinedText = {
+  fontWeight: "bold" as const,
+  fontSize: 16,
+};
+
+const pillShape = Shape.RoundedCorner({
+  cornerRadii: { topStart: 999, topEnd: 999, bottomStart: 999, bottomEnd: 999 },
+});
 
 export default function BudgetCatCard({
   categoryName,
@@ -37,77 +42,54 @@ export default function BudgetCatCard({
   budgetCents: number | null;
   onPress: () => void;
 }) {
+  const iconSource = getIconSource(categoryIcon || "check");
+
   // No category budget: show spent + "Tap to set budget", no fill.
   if (budgetCents === null || budgetCents === undefined) {
     return (
-      <Box
-        modifiers={[
-          fillMaxWidth(1),
-          border(1, "#9AA0A6"),
-          clip(Shapes.RoundedCorner(12)),
-          clickable(onPress),
-        ]}
+      <OutlinedButton
+        onClick={onPress}
+        modifiers={[fillMaxWidth(1), height(50)]}
+        shape={pillShape}
       >
-        <Row
-          verticalAlignment="center"
-          modifiers={[fillMaxWidth(1), fillMaxHeight(), paddingAll(16)]}
+        <Box modifiers={[size(30, 30), background("#FFFFFF")]}>
+          <Icon source={iconSource} size={18} tint={categoryColor} />
+        </Box>
+        <Box modifiers={[width(8)]} />
+        <Text
+          color={categoryColor}
+          style={{ fontWeight: "bold", fontSize: 16 }}
         >
-          <Icon
-            source={getIconSource(categoryIcon)}
-            size={24}
-            tint={categoryColor}
-          />
-          <Spacer size={8} />
-          <Text textStyle={{ color: categoryColor }}>{categoryName}</Text>
-          <Spacer flexible />
-          <Text>{fmt(spentCents)}</Text>
-          <Spacer size={8} />
-          <Text>Tap to set budget</Text>
-        </Row>
-      </Box>
+          {categoryName}
+        </Text>
+        <Box modifiers={[weight(1), fillMaxHeight()]} />
+        <Text style={{ fontSize: 16 }}>{fmt(spentCents)}</Text>
+        <Box modifiers={[width(8)]} />
+        <Text style={{ fontSize: 16 }}>Tap to set budget</Text>
+      </OutlinedButton>
     );
   }
 
   const percentage = budgetCents > 0 ? spentCents / budgetCents : 0;
   const pctLabel = `${Math.round(percentage * 100)}%`;
-  const color = fillColor(percentage);
-  const fraction = Math.min(percentage, 1);
-  const textColor = fraction > 0.5 ? "#FFFFFF" : "#000000";
 
   return (
-    <Box
-      modifiers={[
-        fillMaxWidth(1),
-        border(1, "#9AA0A6"),
-        clip(Shapes.RoundedCorner(12)),
-        clickable(onPress),
-      ]}
+    <OutlinedButton
+      onClick={onPress}
+      modifiers={[fillMaxWidth(1), height(50)]}
+      shape={pillShape}
     >
-      <Box modifiers={[fillMaxWidth(1), fillMaxHeight()]}>
-        <Box
-          modifiers={[
-            fillMaxWidth(fraction),
-            fillMaxHeight(),
-            background(color),
-          ]}
-        />
-        <Row
-          verticalAlignment="center"
-          modifiers={[fillMaxWidth(1), fillMaxHeight(), paddingAll(16)]}
-        >
-          <Icon
-            source={getIconSource(categoryIcon)}
-            size={24}
-            tint={fraction > 0.5 ? "#FFFFFF" : categoryColor}
-          />
-          <Spacer size={8} />
-          <Text textStyle={{ color: textColor }}>{categoryName}</Text>
-          <Spacer flexible />
-          <Text textStyle={{ color: textColor }}>
-            {`${fmt(spentCents)} / ${fmt(budgetCents)} (${pctLabel})`}
-          </Text>
-        </Row>
+      <Box modifiers={[size(30, 30), background("#FFFFFF")]}>
+        <Icon source={iconSource} size={18} tint={categoryColor} />
       </Box>
-    </Box>
+      <Box modifiers={[width(8)]} />
+      <Text color="#000000" style={outlinedText} maxLines={1}>
+        {categoryName}
+      </Text>
+      <Box modifiers={[weight(1), fillMaxHeight()]} />
+      <Text color="#000000" style={outlinedText} maxLines={1}>
+        {`${fmt(spentCents)} / ${fmt(budgetCents)} (${pctLabel})`}
+      </Text>
+    </OutlinedButton>
   );
 }

@@ -7,7 +7,8 @@ import { useFinanceStore } from "@/store/useFinanceStore";
 import { ScrollView } from "@expo/ui";
 import { Box, Column, Host, Text } from "@expo/ui/jetpack-compose";
 import { fillMaxSize, fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
-import { useState } from "react";
+import { useIsFocused } from "expo-router";
+import { useEffect, useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -34,6 +35,20 @@ export default function BudgetScreen() {
   const [showBudgetEdit, setShowBudgetEdit] = useState(false);
   const [showCatBudgetEdit, setShowCatBudgetEdit] = useState(false);
   const [editCatId, setEditCatId] = useState<number>(0);
+  const [focusKey, setFocusKey] = useState(0);
+
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    if (isFocused) {
+      timeout = setTimeout(() => {
+        setFocusKey((k) => k + 1);
+      }, 0);
+    }
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [isFocused]);
 
   const yearMonth = toYearMonth(selectedMonth);
   const prevYm = prevYearMonth(yearMonth);

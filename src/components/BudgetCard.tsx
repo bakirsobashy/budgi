@@ -1,27 +1,28 @@
-import { Spacer, Text } from "@expo/ui";
-import { Box, Button, Row } from "@expo/ui/jetpack-compose";
 import {
-  background,
-  border,
-  clip,
-  clickable,
+  Box,
+  Button,
+  OutlinedButton,
+  Shape,
+  Text,
+} from "@expo/ui/jetpack-compose";
+import {
   fillMaxHeight,
   fillMaxWidth,
+  height,
   paddingAll,
-  Shapes,
+  weight,
 } from "@expo/ui/jetpack-compose/modifiers";
 
-// Interpolate from blue (0%) to red (100%).
-function fillColor(percentage: number): string {
-  const t = Math.min(Math.max(percentage, 0), 1);
-  // Blue #2196F3 (33, 150, 243) -> Red #F44336 (244, 67, 54)
-  const r = Math.round(33 + (244 - 33) * t);
-  const g = Math.round(150 + (67 - 150) * t);
-  const b = Math.round(243 + (54 - 243) * t);
-  return `rgb(${r}, ${g}, ${b})`;
-}
-
 const fmt = (cents: number) => `$${(cents / 100).toFixed(2)}`;
+
+const outlinedText = {
+  fontWeight: "bold" as const,
+  fontSize: 16,
+};
+
+const pillShape = Shape.RoundedCorner({
+  cornerRadii: { topStart: 999, topEnd: 999, bottomStart: 999, bottomEnd: 999 },
+});
 
 export default function BudgetCard({
   spentCents,
@@ -38,76 +39,55 @@ export default function BudgetCard({
   onStartFresh: () => void;
   hasPrevBudget: boolean;
 }) {
-  // No budget set: show prompt to copy or start fresh.
+  // No budget set: prompt to copy or start fresh.
   if (budgetCents === null || budgetCents === undefined) {
     return (
-      <Box
-        modifiers={[
-          fillMaxWidth(1),
-          border(1, "#9AA0A6"),
-          clip(Shapes.RoundedCorner(12)),
-          paddingAll(16),
-          clickable(onPress),
-        ]}
+      <OutlinedButton
+        onClick={onPress}
+        modifiers={[fillMaxWidth(1), height(80)]}
+        shape={pillShape}
       >
-        <Button onClick={onStartFresh} modifiers={[fillMaxWidth(1)]}>
-          <Text>Monthly Budget: Not set</Text>
-        </Button>
-        <Text>Tap to set a budget, or copy last month:</Text>
-        <Row>
-          <Button
-            onClick={onCopyLastMonth}
-            colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
-            enabled={hasPrevBudget}
-          >
-            <Text>Copy last month</Text>
+        <Box modifiers={[fillMaxWidth(1), paddingAll(16)]}>
+          <Button onClick={onStartFresh} modifiers={[fillMaxWidth(1)]}>
+            <Text>Monthly Budget: Not set</Text>
           </Button>
-          <Spacer size={8} />
-          <Button
-            onClick={onStartFresh}
-            colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
-          >
-            <Text>Start fresh</Text>
-          </Button>
-        </Row>
-      </Box>
+          <Text>Tap to set a budget, or copy last month:</Text>
+          <Box modifiers={[paddingAll(8)]}>
+            <Button
+              onClick={onCopyLastMonth}
+              colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
+              enabled={hasPrevBudget}
+            >
+              <Text>Copy last month</Text>
+            </Button>
+            <Button
+              onClick={onStartFresh}
+              colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
+            >
+              <Text>Start fresh</Text>
+            </Button>
+          </Box>
+        </Box>
+      </OutlinedButton>
     );
   }
 
   const percentage = budgetCents > 0 ? spentCents / budgetCents : 0;
   const pctLabel = `${Math.round(percentage * 100)}%`;
-  const color = fillColor(percentage);
-  const fraction = Math.min(percentage, 1);
-  const textColor = fraction > 0.5 ? "#FFFFFF" : "#000000";
 
   return (
-    <Box
-      modifiers={[
-        fillMaxWidth(1),
-        border(1, "#9AA0A6"),
-        clip(Shapes.RoundedCorner(12)),
-        clickable(onPress),
-      ]}
+    <OutlinedButton
+      onClick={onPress}
+      modifiers={[fillMaxWidth(1), height(50)]}
+      shape={pillShape}
     >
-      <Box modifiers={[fillMaxWidth(1), fillMaxHeight()]}>
-        <Box
-          modifiers={[
-            fillMaxWidth(fraction),
-            fillMaxHeight(),
-            background(color),
-          ]}
-        />
-        <Row
-          verticalAlignment="center"
-          modifiers={[fillMaxWidth(1), fillMaxHeight(), paddingAll(16)]}
-        >
-          <Text textStyle={{ color: textColor }}>Monthly Budget</Text>
-          <Spacer flexible />
-          <Text textStyle={{ color: textColor }}>
-            {`${fmt(spentCents)} / ${fmt(budgetCents)} (${pctLabel})`}
-          </Text>
-        </Row>
-      </Box>
-    </Box>
+      <Text color="#000000" style={outlinedText} maxLines={1}>
+        Monthly Budget
+      </Text>
+      <Box modifiers={[weight(1), fillMaxHeight()]} />
+      <Text color="#000000" style={outlinedText} maxLines={1}>
+        {`${fmt(spentCents)} / ${fmt(budgetCents)} (${pctLabel})`}
+      </Text>
+    </OutlinedButton>
   );
 }

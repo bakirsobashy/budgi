@@ -4,7 +4,7 @@ module.exports = function (api) {
     presets: ["babel-preset-expo"],
     plugins: [
       ["inline-import", { extensions: [".sql"] }],
-      "@expo/ui/babel-plugin"
-    ], // <-- add this
+      "@expo/ui/babel-plugin",
+    ],
   };
 };
