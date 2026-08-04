@@ -121,6 +121,7 @@ export default function BudgetScreen() {
                     spentCents={totalSpentCents}
                     budgetCents={totalBudgetCents}
                     onPress={() => setShowBudgetEdit(true)}
+                    onEditPress={() => setShowBudgetEdit(true)}
                     onCopyLastMonth={() => {
                       useFinanceStore
                         .getState()
@@ -149,6 +150,10 @@ export default function BudgetScreen() {
                           spentCents={spent}
                           budgetCents={cb ? cb.amount : null}
                           onPress={() => {
+                            setEditCatId(cat.id);
+                            setShowCatBudgetEdit(true);
+                          }}
+                          onEditPress={() => {
                             setEditCatId(cat.id);
                             setShowCatBudgetEdit(true);
                           }}

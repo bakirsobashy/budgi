@@ -1,16 +1,17 @@
+import { Spacer } from "@expo/ui";
 import {
   Box,
   Button,
+  Column,
   OutlinedButton,
-  Shape,
+  Row,
   Text,
 } from "@expo/ui/jetpack-compose";
 import {
-  fillMaxHeight,
+  align,
   fillMaxWidth,
   height,
-  paddingAll,
-  weight,
+  size,
 } from "@expo/ui/jetpack-compose/modifiers";
 
 const fmt = (cents: number) => `$${(cents / 100).toFixed(2)}`;
@@ -20,14 +21,11 @@ const outlinedText = {
   fontSize: 16,
 };
 
-const pillShape = Shape.RoundedCorner({
-  cornerRadii: { topStart: 999, topEnd: 999, bottomStart: 999, bottomEnd: 999 },
-});
-
 export default function BudgetCard({
   spentCents,
   budgetCents,
   onPress,
+  onEditPress,
   onCopyLastMonth,
   onStartFresh,
   hasPrevBudget,
@@ -35,6 +33,7 @@ export default function BudgetCard({
   spentCents: number;
   budgetCents: number | null;
   onPress: () => void;
+  onEditPress?: () => void;
   onCopyLastMonth: () => void;
   onStartFresh: () => void;
   hasPrevBudget: boolean;
@@ -42,33 +41,29 @@ export default function BudgetCard({
   // No budget set: prompt to copy or start fresh.
   if (budgetCents === null || budgetCents === undefined) {
     return (
-      <OutlinedButton
-        onClick={onPress}
+      <Column
         modifiers={[fillMaxWidth(1), height(80)]}
-        shape={pillShape}
+        horizontalAlignment="center"
+        verticalArrangement="center"
       >
-        <Box modifiers={[fillMaxWidth(1), paddingAll(16)]}>
-          <Button onClick={onStartFresh} modifiers={[fillMaxWidth(1)]}>
-            <Text>Monthly Budget: Not set</Text>
+        <Text style={outlinedText}>Monthly Budget: Not set</Text>
+        <Row>
+          <Button
+            onClick={onCopyLastMonth}
+            colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
+            enabled={hasPrevBudget}
+          >
+            <Text>Copy last month</Text>
           </Button>
-          <Text>Tap to set a budget, or copy last month:</Text>
-          <Box modifiers={[paddingAll(8)]}>
-            <Button
-              onClick={onCopyLastMonth}
-              colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
-              enabled={hasPrevBudget}
-            >
-              <Text>Copy last month</Text>
-            </Button>
-            <Button
-              onClick={onStartFresh}
-              colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
-            >
-              <Text>Start fresh</Text>
-            </Button>
-          </Box>
-        </Box>
-      </OutlinedButton>
+          <Spacer size={8} />
+          <Button
+            onClick={onStartFresh}
+            colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
+          >
+            <Text>Start fresh</Text>
+          </Button>
+        </Row>
+      </Column>
     );
   }
 
@@ -78,16 +73,29 @@ export default function BudgetCard({
   return (
     <OutlinedButton
       onClick={onPress}
-      modifiers={[fillMaxWidth(1), height(50)]}
-      shape={pillShape}
+      modifiers={[fillMaxWidth(1), height(70)]}
+      contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
     >
-      <Text color="#000000" style={outlinedText} maxLines={1}>
-        Monthly Budget
-      </Text>
-      <Box modifiers={[weight(1), fillMaxHeight()]} />
-      <Text color="#000000" style={outlinedText} maxLines={1}>
-        {`${fmt(spentCents)} / ${fmt(budgetCents)} (${pctLabel})`}
-      </Text>
+      <Box modifiers={[fillMaxWidth(1), height(70)]}>
+        <Column
+          verticalArrangement="center"
+          horizontalAlignment="center"
+          modifiers={[align("center")]}
+        >
+          <Text color="#000000" style={outlinedText} maxLines={1}>
+            Monthly Budget
+          </Text>
+          <Text color="#000000" style={outlinedText} maxLines={1}>
+            {`${fmt(spentCents)} / ${fmt(budgetCents)} (${pctLabel})`}
+          </Text>
+        </Column>
+        <OutlinedButton
+          onClick={onPress}
+          modifiers={[size(352 * percentage, 70)]}
+        >
+          <Text color="#000000" style={outlinedText} maxLines={1}></Text>
+        </OutlinedButton>
+      </Box>
     </OutlinedButton>
   );
 }

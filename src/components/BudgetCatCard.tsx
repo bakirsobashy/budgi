@@ -1,20 +1,7 @@
 import { getIconSource } from "@/lib/icons";
-import {
-  Box,
-  Icon,
-  OutlinedButton,
-  Shape,
-  Text,
-} from "@expo/ui/jetpack-compose";
-import {
-  background,
-  fillMaxHeight,
-  fillMaxWidth,
-  height,
-  size,
-  weight,
-  width,
-} from "@expo/ui/jetpack-compose/modifiers";
+import { Spacer } from "@expo/ui";
+import { Icon, OutlinedButton, Shape, Text } from "@expo/ui/jetpack-compose";
+import { fillMaxWidth, height } from "@expo/ui/jetpack-compose/modifiers";
 
 const fmt = (cents: number) => `$${(cents / 100).toFixed(2)}`;
 
@@ -34,6 +21,7 @@ export default function BudgetCatCard({
   spentCents,
   budgetCents,
   onPress,
+  onEditPress,
 }: {
   categoryName: string;
   categoryColor: string;
@@ -41,32 +29,16 @@ export default function BudgetCatCard({
   spentCents: number;
   budgetCents: number | null;
   onPress: () => void;
+  onEditPress?: () => void;
 }) {
   const iconSource = getIconSource(categoryIcon || "check");
 
   // No category budget: show spent + "Tap to set budget", no fill.
   if (budgetCents === null || budgetCents === undefined) {
     return (
-      <OutlinedButton
-        onClick={onPress}
-        modifiers={[fillMaxWidth(1), height(50)]}
-        shape={pillShape}
-      >
-        <Box modifiers={[size(30, 30), background("#FFFFFF")]}>
-          <Icon source={iconSource} size={18} tint={categoryColor} />
-        </Box>
-        <Box modifiers={[width(8)]} />
-        <Text
-          color={categoryColor}
-          style={{ fontWeight: "bold", fontSize: 16 }}
-        >
-          {categoryName}
-        </Text>
-        <Box modifiers={[weight(1), fillMaxHeight()]} />
-        <Text style={{ fontSize: 16 }}>{fmt(spentCents)}</Text>
-        <Box modifiers={[width(8)]} />
-        <Text style={{ fontSize: 16 }}>Tap to set budget</Text>
-      </OutlinedButton>
+      <Text color={categoryColor} style={outlinedText} maxLines={1}>
+        {categoryName}
+      </Text>
     );
   }
 
@@ -79,14 +51,12 @@ export default function BudgetCatCard({
       modifiers={[fillMaxWidth(1), height(50)]}
       shape={pillShape}
     >
-      <Box modifiers={[size(30, 30), background("#FFFFFF")]}>
-        <Icon source={iconSource} size={18} tint={categoryColor} />
-      </Box>
-      <Box modifiers={[width(8)]} />
-      <Text color="#000000" style={outlinedText} maxLines={1}>
+      <Icon source={iconSource} size={18} tint={categoryColor} />
+      <Spacer size={8} />
+      <Text color={categoryColor} style={outlinedText} maxLines={1}>
         {categoryName}
       </Text>
-      <Box modifiers={[weight(1), fillMaxHeight()]} />
+      <Spacer flexible />
       <Text color="#000000" style={outlinedText} maxLines={1}>
         {`${fmt(spentCents)} / ${fmt(budgetCents)} (${pctLabel})`}
       </Text>
