@@ -69,27 +69,9 @@ export default function BudgetCard({
 
   const percentage = budgetCents > 0 ? spentCents / budgetCents : 0;
   const pctLabel = `${Math.round(percentage * 100)}%`;
-  let fillColor = "#34C077"; // Default to green
 
-  switch (true) {
-    case percentage >= 0 && percentage < 20:
-      fillColor = "#34C077"; // Green
-      break;
-    case percentage >= 20 && percentage < 40:
-      fillColor = "#25A18B"; // Green
-      break;
-    case percentage >= 40 && percentage < 60:
-      fillColor = "#FCC40A"; // Green
-      break;
-    case percentage >= 60 && percentage < 80:
-      fillColor = "#FA6F4E"; // Green
-      break;
-    case percentage >= 80:
-      fillColor = "#D93452"; // Green
-      break;
-    default:
-      fillColor = "#34C077"; // Red for over budget
-  }
+  let fillColor = "#7f8180"; // Default to green
+
   return (
     <OutlinedButton
       onClick={onPress}

@@ -12,6 +12,11 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: "black",
         headerTintColor: "black",
+        animation: "shift",
+        transitionSpec: {
+          animation: "timing",
+          config: { duration: 200 },
+        },
       }}
     >
       <Tabs.Screen
