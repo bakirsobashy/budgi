@@ -15,6 +15,8 @@ import {
   fillMaxWidth,
   graphicsLayer,
   height,
+  offset,
+  size,
   tween,
 } from "@expo/ui/jetpack-compose/modifiers";
 import { useEffect, useState } from "react";
@@ -102,10 +104,29 @@ export default function BudgetCatCard({
           horizontalAlignment="center"
           modifiers={[align("center")]}
         >
-          <Spacer size={16} />
-          <Icon source={iconSource} size={18} tint={categoryColor} />
           <Spacer size={8} />
-          <Text color={categoryColor} style={outlinedText} maxLines={1}>
+          <OutlinedButton
+            colors={{ containerColor: "#ffffff", contentColor: "#FFFFFF" }}
+            modifiers={[size(25, 25), offset(10, 0)]}
+            contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
+            onClick={onPress}
+          >
+            <Icon source={iconSource} size={18} tint={categoryColor} />
+          </OutlinedButton>
+          <Spacer size={16} />
+          <Text
+            color={categoryColor}
+            style={{
+              ...outlinedText,
+              shadow: {
+                color: "#ffffff",
+                offsetX: 0,
+                offsetY: 0,
+                blurRadius: 2,
+              },
+            }}
+            maxLines={1}
+          >
             {categoryName}
           </Text>
           <Spacer flexible />
