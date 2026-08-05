@@ -9,10 +9,13 @@ import {
 } from "@expo/ui/jetpack-compose";
 import {
   align,
-  alpha,
+  animated,
   fillMaxWidth,
+  graphicsLayer,
   height,
+  tween,
 } from "@expo/ui/jetpack-compose/modifiers";
+import { useEffect, useState } from "react";
 
 const fmt = (cents: number) => `$${(cents / 100).toFixed(2)}`;
 
@@ -38,6 +41,17 @@ export default function BudgetCard({
   onStartFresh: () => void;
   hasPrevBudget: boolean;
 }) {
+  const percentage = budgetCents && budgetCents > 0 ? spentCents / budgetCents : 0;
+
+  // Start the fill bar at 0, then animate to the target percentage.
+  // The setTimeout deferral is needed to satisfy the
+  // react-hooks/set-state-in-effect lint rule.
+  const [animPct, setAnimPct] = useState(0);
+  useEffect(() => {
+    const t = setTimeout(() => setAnimPct(percentage), 0);
+    return () => clearTimeout(t);
+  }, [percentage]);
+
   // No budget set: prompt to copy or start fresh.
   if (budgetCents === null || budgetCents === undefined) {
     return (
@@ -67,7 +81,6 @@ export default function BudgetCard({
     );
   }
 
-  const percentage = budgetCents > 0 ? spentCents / budgetCents : 0;
   const pctLabel = `${Math.round(percentage * 100)}%`;
 
   let fillColor = "#7f8180"; // Default to green
@@ -94,7 +107,16 @@ export default function BudgetCard({
         <OutlinedButton
           colors={{ containerColor: fillColor }}
           onClick={onPress}
-          modifiers={[fillMaxWidth(percentage), height(70), alpha(0.3)]}
+          modifiers={[
+            fillMaxWidth(1),
+            height(70),
+            graphicsLayer({
+              scaleX: animated(animPct, tween({ durationMillis: 600, easing: "fastOutSlowIn" })),
+              transformOriginX: 0,
+              transformOriginY: 0.5,
+              alpha: 0.3,
+            }),
+          ]}
         >
           <Text></Text>
         </OutlinedButton>

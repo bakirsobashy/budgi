@@ -10,10 +10,13 @@ import {
 } from "@expo/ui/jetpack-compose";
 import {
   align,
-  alpha,
+  animated,
   fillMaxWidth,
+  graphicsLayer,
   height,
+  tween,
 } from "@expo/ui/jetpack-compose/modifiers";
+import { useEffect, useState } from "react";
 
 const fmt = (cents: number) => `$${(cents / 100).toFixed(2)}`;
 
@@ -45,6 +48,15 @@ export default function BudgetCatCard({
 }) {
   const iconSource = getIconSource(categoryIcon || "check");
 
+  const percentage = budgetCents && budgetCents > 0 ? spentCents / budgetCents : 0;
+
+  // Start the fill bar at 0, then animate to the target percentage.
+  const [animPct, setAnimPct] = useState(0);
+  useEffect(() => {
+    const t = setTimeout(() => setAnimPct(percentage), 0);
+    return () => clearTimeout(t);
+  }, [percentage]);
+
   // No category budget: show spent + "Tap to set budget", no fill.
   if (budgetCents === null || budgetCents === undefined) {
     return (
@@ -54,7 +66,6 @@ export default function BudgetCatCard({
     );
   }
 
-  const percentage = budgetCents > 0 ? spentCents / budgetCents : 0;
   const pctLabel = `${Math.round(percentage * 100)}%`;
   let fillColor = "#7f8180"; // Default to green
 
@@ -85,7 +96,16 @@ export default function BudgetCatCard({
         <OutlinedButton
           colors={{ containerColor: fillColor }}
           onClick={onPress}
-          modifiers={[fillMaxWidth(percentage), height(50), alpha(0.3)]}
+          modifiers={[
+            fillMaxWidth(1),
+            height(50),
+            graphicsLayer({
+              scaleX: animated(animPct, tween({ durationMillis: 600, easing: "fastOutSlowIn" })),
+              transformOriginX: 0,
+              transformOriginY: 0.5,
+              alpha: 0.3,
+            }),
+          ]}
         >
           <Text></Text>
         </OutlinedButton>

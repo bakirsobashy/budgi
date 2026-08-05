@@ -150,6 +150,7 @@ export default function BudgetScreen() {
                   modifiers={[fillMaxWidth(), paddingAll(16)]}
                 >
                   <BudgetCard
+                    key={`budget-card-${yearMonth}-${focusKey}`}
                     spentCents={totalSpentCents}
                     budgetCents={totalBudgetCents}
                     onPress={() => setShowBudgetEdit(true)}
@@ -169,7 +170,7 @@ export default function BudgetScreen() {
                   ) : (
                     catsWithBudget.map(({ cat, spent, budgetCents }) => (
                       <BudgetCatCard
-                        key={cat.id}
+                        key={`cat-budget-${cat.id}-${yearMonth}-${focusKey}`}
                         categoryName={cat.name}
                         categoryColor={cat.color}
                         categoryIcon={cat.icon}
