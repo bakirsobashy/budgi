@@ -1,3 +1,4 @@
+import { budgetFillColor } from "@/lib/budgetColor";
 import { getIconSource } from "@/lib/icons";
 import { Spacer } from "@expo/ui";
 import {
@@ -48,7 +49,8 @@ export default function BudgetCatCard({
 }) {
   const iconSource = getIconSource(categoryIcon || "check");
 
-  const percentage = budgetCents && budgetCents > 0 ? spentCents / budgetCents : 0;
+  const percentage =
+    budgetCents && budgetCents > 0 ? spentCents / budgetCents : 0;
 
   // Start the fill bar at 0, then animate to the target percentage.
   const [animPct, setAnimPct] = useState(0);
@@ -67,7 +69,7 @@ export default function BudgetCatCard({
   }
 
   const pctLabel = `${Math.round(percentage * 100)}%`;
-  let fillColor = "#7f8180"; // Default to green
+  const fillColor = budgetFillColor(percentage);
 
   return (
     <OutlinedButton
@@ -76,6 +78,25 @@ export default function BudgetCatCard({
       contentPadding={{ start: 0, top: 0, end: 0, bottom: 0 }}
     >
       <Box modifiers={[fillMaxWidth(1), height(50)]}>
+        <OutlinedButton
+          colors={{ containerColor: fillColor }}
+          onClick={onPress}
+          modifiers={[
+            fillMaxWidth(1),
+            height(50),
+            graphicsLayer({
+              scaleX: animated(
+                animPct,
+                tween({ durationMillis: 600, easing: "fastOutSlowIn" }),
+              ),
+              transformOriginX: 0,
+              transformOriginY: 0.5,
+              alpha: 1,
+            }),
+          ]}
+        >
+          <Text></Text>
+        </OutlinedButton>
         <Row
           verticalArrangement="center"
           horizontalAlignment="center"
@@ -93,22 +114,6 @@ export default function BudgetCatCard({
           </Text>
           <Spacer size={16} />
         </Row>
-        <OutlinedButton
-          colors={{ containerColor: fillColor }}
-          onClick={onPress}
-          modifiers={[
-            fillMaxWidth(1),
-            height(50),
-            graphicsLayer({
-              scaleX: animated(animPct, tween({ durationMillis: 600, easing: "fastOutSlowIn" })),
-              transformOriginX: 0,
-              transformOriginY: 0.5,
-              alpha: 0.3,
-            }),
-          ]}
-        >
-          <Text></Text>
-        </OutlinedButton>
       </Box>
     </OutlinedButton>
   );
