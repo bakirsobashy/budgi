@@ -65,6 +65,7 @@ export default function BudgetCatEditBS({
             {categoryName}
           </Text>
         </Row>
+        <Text textStyle={{ fontWeight: "bold" }}>{yearMonth}</Text>
         <OutlinedTextField
           keyboardOptions={{
             keyboardType: "number",

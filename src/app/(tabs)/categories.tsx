@@ -5,7 +5,7 @@ import CatDescBS from "@/components/CatDescBS";
 import CatEditBS from "@/components/CatEditBS";
 import IncomeTB from "@/components/IncomeTB";
 import { useFinanceStore } from "@/store/useFinanceStore";
-import { ScrollView } from "@expo/ui";
+import { ScrollView, Spacer } from "@expo/ui";
 import { Box, Column, Host } from "@expo/ui/jetpack-compose";
 import {
   fillMaxSize,
@@ -29,6 +29,7 @@ export default function Categories() {
       <View style={styles.inner}>
         <Host style={styles.host}>
           <Column modifiers={[fillMaxSize()]}>
+            <Spacer size={16} />
             <IncomeTB isIncome={isIncome} setIsIncome={setIsIncome} />
 
             <Box modifiers={[fillMaxSize()]}>
@@ -38,7 +39,9 @@ export default function Categories() {
                   modifiers={[fillMaxWidth(), paddingAll(16)]}
                 >
                   {categories
-                    .filter((cat) => cat.type === (isIncome ? "income" : "expense"))
+                    .filter(
+                      (cat) => cat.type === (isIncome ? "income" : "expense"),
+                    )
                     .map((cat) => {
                       return (
                         <CatCard

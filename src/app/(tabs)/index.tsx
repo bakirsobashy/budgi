@@ -6,7 +6,7 @@ import TransDescBS from "@/components/TransDescBS";
 import TransEditBS from "@/components/TransEditBS";
 import { Transaction } from "@/lib/types";
 import { useFinanceStore } from "@/store/useFinanceStore";
-import { ScrollView } from "@expo/ui";
+import { ScrollView, Spacer } from "@expo/ui";
 import {
   Box,
   Column,
@@ -58,20 +58,23 @@ const Index = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.inner}>
         <Host style={styles.host}>
-          <Column
-            modifiers={[fillMaxSize()]}
-            horizontalAlignment="center"
-          >
+          <Column modifiers={[fillMaxSize()]} horizontalAlignment="center">
+            <Spacer size={16} />
+
             <MonthSelector
               selectedMonth={selectedMonth}
               onMonthChange={(date) => setSelectedMonth(date)}
               onOpenPicker={() => setShowMonthPicker(true)}
             />
             <OutlinedButton>
-              <Text style={{ fontWeight: "bold" }}>{`Total: ${total >= 0 ? "+" : "-"}$${Math.abs(total).toFixed(2)}`}</Text>
+              <Text
+                style={{ fontWeight: "bold" }}
+              >{`Total: ${total >= 0 ? "+" : "-"}$${Math.abs(total).toFixed(2)}`}</Text>
             </OutlinedButton>
             <OutlinedButton>
-              <Text style={{ fontWeight: "bold" }}>{`Income: +$${income.toFixed(2)} | Expense: -$${expense.toFixed(2)}`}</Text>
+              <Text
+                style={{ fontWeight: "bold" }}
+              >{`Income: +$${income.toFixed(2)} | Expense: -$${expense.toFixed(2)}`}</Text>
             </OutlinedButton>
 
             <Box modifiers={[fillMaxSize()]}>
@@ -93,7 +96,8 @@ const Index = () => {
                     ),
                   )
                     .sort(
-                      ([a], [b]) => new Date(b).getTime() - new Date(a).getTime(),
+                      ([a], [b]) =>
+                        new Date(b).getTime() - new Date(a).getTime(),
                     )
                     .map(([dayKey, txs]) => (
                       <Column
@@ -114,23 +118,23 @@ const Index = () => {
                             const category = categories.find(
                               (c) => c.id === tx.categoryId,
                             );
-                              return (
-                                <TransactionCard
-                                  key={tx.id}
-                                  amount={tx.amount / 100}
-                                  category={category?.name}
-                                  color={category?.color}
-                                  icon={category?.icon}
-                                  type={tx.type}
-                                  onPress={() => {
-                                    setSelectedTransaction(tx);
-                                    setShowDescButtomSheet(true);
-                                  }}
-                                  onEditPress={() => {
-                                    setSelectedTransaction(tx);
-                                    setShowEditButtomSheet(true);
-                                  }}
-                                />
+                            return (
+                              <TransactionCard
+                                key={tx.id}
+                                amount={tx.amount / 100}
+                                category={category?.name}
+                                color={category?.color}
+                                icon={category?.icon}
+                                type={tx.type}
+                                onPress={() => {
+                                  setSelectedTransaction(tx);
+                                  setShowDescButtomSheet(true);
+                                }}
+                                onEditPress={() => {
+                                  setSelectedTransaction(tx);
+                                  setShowEditButtomSheet(true);
+                                }}
+                              />
                             );
                           })}
                         </Column>

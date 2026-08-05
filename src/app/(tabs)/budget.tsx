@@ -1,12 +1,18 @@
+import AddCatBudgetBS from "@/components/AddCatBudgetBS";
+import AddCatButton from "@/components/AddCatButton";
 import BudgetCard from "@/components/BudgetCard";
 import BudgetCatCard from "@/components/BudgetCatCard";
 import BudgetCatEditBS from "@/components/BudgetCatEditBS";
 import BudgetEditBS from "@/components/BudgetEditBS";
 import MonthSelector, { JSMonthPicker } from "@/components/MonthSelector";
 import { useFinanceStore } from "@/store/useFinanceStore";
-import { ScrollView } from "@expo/ui";
+import { ScrollView, Spacer } from "@expo/ui";
 import { Box, Column, Host, Text } from "@expo/ui/jetpack-compose";
-import { fillMaxSize, fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
+import {
+  fillMaxSize,
+  fillMaxWidth,
+  paddingAll,
+} from "@expo/ui/jetpack-compose/modifiers";
 import { useIsFocused } from "expo-router";
 import { useEffect, useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
@@ -34,6 +40,7 @@ export default function BudgetScreen() {
 
   const [showBudgetEdit, setShowBudgetEdit] = useState(false);
   const [showCatBudgetEdit, setShowCatBudgetEdit] = useState(false);
+  const [showAddCatBudget, setShowAddCatBudget] = useState(false);
   const [editCatId, setEditCatId] = useState<number>(0);
   const [focusKey, setFocusKey] = useState(0);
 
@@ -74,11 +81,32 @@ export default function BudgetScreen() {
     );
   }
 
-  // Only expense categories that have spending this month, sorted by spend desc
-  const catsWithSpend = categories
-    .filter((c) => c.type === "expense" && spendByCat.has(c.id))
-    .map((c) => ({ cat: c, spent: spendByCat.get(c.id) ?? 0 }))
+  // Expense categories that have spending AND a budget set for this month
+  const catsWithBudget = categories
+    .filter((c) => c.type === "expense")
+    .map((c) => ({
+      cat: c,
+      spent: spendByCat.get(c.id) ?? 0,
+      budget: categoryBudgets.find(
+        (b) => b.yearMonth === yearMonth && b.categoryId === c.id,
+      ),
+    }))
+    .filter(({ budget }) => budget !== undefined)
+    .map(({ cat, spent, budget }) => ({
+      cat,
+      spent,
+      budgetCents: budget!.amount,
+    }))
     .sort((a, b) => b.spent - a.spent);
+
+  // Expense categories without a budget for this month
+  const availableCats = categories.filter(
+    (c) =>
+      c.type === "expense" &&
+      !categoryBudgets.some(
+        (b) => b.yearMonth === yearMonth && b.categoryId === c.id,
+      ),
+  );
 
   // Budgets
   const totalBudget = monthlyBudgets.find((b) => b.yearMonth === yearMonth);
@@ -100,13 +128,17 @@ export default function BudgetScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.inner}>
         <Host style={styles.host}>
-          <Column
-            modifiers={[fillMaxSize()]}
-            horizontalAlignment="center"
-          >
+          <Column modifiers={[fillMaxSize()]} horizontalAlignment="center">
+            <Spacer size={16} />
+
             <MonthSelector
               selectedMonth={selectedMonth}
-              onMonthChange={(date) => setSelectedMonth(date)}
+              onMonthChange={(date) => {
+                setShowBudgetEdit(false);
+                setShowCatBudgetEdit(false);
+                setShowAddCatBudget(false);
+                setSelectedMonth(date);
+              }}
               onOpenPicker={() => setShowMonthPicker(true)}
             />
 
@@ -131,38 +163,32 @@ export default function BudgetScreen() {
                     onStartFresh={() => setShowBudgetEdit(true)}
                     hasPrevBudget={hasPrevBudget}
                   />
-
-                  {catsWithSpend.length === 0 ? (
-                    <Text>No expenses this month</Text>
+                  <Spacer size={8} />
+                  {catsWithBudget.length === 0 ? (
+                    <Text>No category budgets this month</Text>
                   ) : (
-                    catsWithSpend.map(({ cat, spent }) => {
-                      const cb = categoryBudgets.find(
-                        (b) =>
-                          b.yearMonth === yearMonth &&
-                          b.categoryId === cat.id,
-                      );
-                      return (
-                        <BudgetCatCard
-                          key={cat.id}
-                          categoryName={cat.name}
-                          categoryColor={cat.color}
-                          categoryIcon={cat.icon}
-                          spentCents={spent}
-                          budgetCents={cb ? cb.amount : null}
-                          onPress={() => {
-                            setEditCatId(cat.id);
-                            setShowCatBudgetEdit(true);
-                          }}
-                          onEditPress={() => {
-                            setEditCatId(cat.id);
-                            setShowCatBudgetEdit(true);
-                          }}
-                        />
-                      );
-                    })
+                    catsWithBudget.map(({ cat, spent, budgetCents }) => (
+                      <BudgetCatCard
+                        key={cat.id}
+                        categoryName={cat.name}
+                        categoryColor={cat.color}
+                        categoryIcon={cat.icon}
+                        spentCents={spent}
+                        budgetCents={budgetCents}
+                        onPress={() => {
+                          setEditCatId(cat.id);
+                          setShowCatBudgetEdit(true);
+                        }}
+                        onEditPress={() => {
+                          setEditCatId(cat.id);
+                          setShowCatBudgetEdit(true);
+                        }}
+                      />
+                    ))
                   )}
                 </Column>
               </ScrollView>
+              <AddCatButton onClick={() => setShowAddCatBudget(true)} />
             </Box>
           </Column>
 
@@ -183,6 +209,13 @@ export default function BudgetScreen() {
             categoryColor={editCat?.color ?? "#000000"}
             categoryIcon={editCat?.icon ?? "check"}
             currentBudgetCents={editCatBudgetCents}
+          />
+          <AddCatBudgetBS
+            key={`addcat-${yearMonth}`}
+            open={showAddCatBudget}
+            setOpen={setShowAddCatBudget}
+            yearMonth={yearMonth}
+            availableCategories={availableCats}
           />
         </Host>
       </View>
