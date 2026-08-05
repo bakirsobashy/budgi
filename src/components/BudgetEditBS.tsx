@@ -1,9 +1,12 @@
 import { useFinanceStore } from "@/store/useFinanceStore";
-import { Spacer, Text, TextInput, useNativeState } from "@expo/ui";
+import { Spacer, Text } from "@expo/ui";
 import {
   Button,
   Column,
   ModalBottomSheet,
+  OutlinedTextField,
+  Row,
+  useNativeState,
 } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
@@ -30,9 +33,7 @@ export default function BudgetEditBS({
   if (!open) return null;
 
   const resetAndClose = () => {
-    // ObservableState is intentionally mutable shared state.
-    // eslint-disable-next-line react-hooks/immutability
-    amountState.value = currentBudgetCents !== null ? fmt(currentBudgetCents) : "";
+    amountState.set(currentBudgetCents !== null ? fmt(currentBudgetCents) : "");
     setError("");
     setOpen(false);
   };
@@ -43,66 +44,74 @@ export default function BudgetEditBS({
         verticalArrangement={{ spacedBy: 16 }}
         modifiers={[fillMaxWidth(), paddingAll(16)]}
       >
-        <Text>Set Monthly Budget</Text>
-        <TextInput
-          modifiers={[fillMaxWidth()]}
-          placeholder="Budget amount ($)"
-          value={amountState}
-          keyboardType="numeric"
-          onChangeText={(text) => {
-            // ObservableState is intentionally mutable shared state.
-            // eslint-disable-next-line react-hooks/immutability
-            amountState.value = text;
+        <OutlinedTextField
+          keyboardOptions={{
+            keyboardType: "number",
           }}
-        />
-        {error ? <Text textStyle={{ color: "red" }}>{error}</Text> : null}
-        <Button
-          colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
-          onClick={async () => {
-            const raw = amountState.value;
-            const cents = Math.round(Number(raw) * 100);
-            if (!Number.isFinite(cents) || cents <= 0) {
-              setError("Enter a valid amount");
-              return;
-            }
-            setError("");
-            setSubmitting(true);
-            try {
-              await useFinanceStore
-                .getState()
-                .setMonthlyBudget(yearMonth, cents);
-              setOpen(false);
-            } catch (e) {
-              setError(
-                e instanceof Error ? e.message : "Failed to save budget",
-              );
-            } finally {
-              setSubmitting(false);
-            }
+          value={amountState}
+          colors={{
+            focusedIndicatorColor: "#000000",
+            unfocusedIndicatorColor: "#000000",
+            focusedContainerColor: "transparent",
+            unfocusedContainerColor: "transparent",
+            focusedLabelColor: "#000000",
+            unfocusedLabelColor: "#000000",
           }}
         >
-          <Text>{submitting ? "Saving..." : "Save"}</Text>
-        </Button>
-        {currentBudgetCents !== null ? (
+          <OutlinedTextField.Label>
+            <Text>Budget amount ($)</Text>
+          </OutlinedTextField.Label>
+        </OutlinedTextField>
+        {error ? <Text textStyle={{ color: "red" }}>{error}</Text> : null}
+        <Row>
+          {currentBudgetCents !== null ? (
+            <Button
+              colors={{ containerColor: "red", contentColor: "#FFFFFF" }}
+              onClick={async () => {
+                try {
+                  await useFinanceStore
+                    .getState()
+                    .deleteMonthlyBudget(yearMonth);
+                  setOpen(false);
+                } catch (e) {
+                  setError(
+                    e instanceof Error ? e.message : "Failed to delete budget",
+                  );
+                }
+              }}
+            >
+              <Text>Delete</Text>
+            </Button>
+          ) : null}
+          <Spacer flexible />
           <Button
-            colors={{ containerColor: "red", contentColor: "#FFFFFF" }}
+            colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
             onClick={async () => {
+              const raw = amountState.value;
+              const cents = Math.round(Number(raw) * 100);
+              if (!Number.isFinite(cents) || cents <= 0) {
+                setError("Enter a valid amount");
+                return;
+              }
+              setError("");
+              setSubmitting(true);
               try {
                 await useFinanceStore
                   .getState()
-                  .deleteMonthlyBudget(yearMonth);
+                  .setMonthlyBudget(yearMonth, cents);
                 setOpen(false);
               } catch (e) {
                 setError(
-                  e instanceof Error ? e.message : "Failed to delete budget",
+                  e instanceof Error ? e.message : "Failed to save budget",
                 );
+              } finally {
+                setSubmitting(false);
               }
             }}
           >
-            <Text>Delete</Text>
+            <Text>{submitting ? "Saving..." : "Save"}</Text>
           </Button>
-        ) : null}
-        <Spacer size={8} />
+        </Row>
       </Column>
     </ModalBottomSheet>
   );

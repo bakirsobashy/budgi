@@ -1,23 +1,16 @@
 import { Transaction } from "@/lib/types";
 import { useFinanceStore } from "@/store/useFinanceStore";
-import { BottomSheet, Spacer, Text, TextInput } from "@expo/ui";
+import { BottomSheet, Spacer, Text } from "@expo/ui";
 import { DateTimePicker } from "@expo/ui/community/datetime-picker";
 import {
-  BasicTextField,
-  Box,
   Button,
   Column,
   OutlinedButton,
+  OutlinedTextField,
   Row,
+  useNativeState,
 } from "@expo/ui/jetpack-compose";
-import {
-  background,
-  clip,
-  fillMaxWidth,
-  padding,
-  paddingAll,
-  Shapes,
-} from "@expo/ui/jetpack-compose/modifiers";
+import { fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
 import CatSelectDM from "./CatSelectDM";
 
@@ -58,6 +51,8 @@ export default function TransEditBS({
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const amountState = useNativeState(fromCents(transaction.amount));
+  const descriptionState = useNativeState(transaction.description);
 
   const categories = useFinanceStore((state) => state.categories).filter(
     (c) => c.type === transaction.type,
@@ -85,20 +80,48 @@ export default function TransEditBS({
         verticalArrangement={{ spacedBy: 16 }}
         modifiers={[fillMaxWidth(), paddingAll(16)]}
       >
-        <Row modifiers={[fillMaxWidth()]}>
-          <Text>Amount:</Text>
-          <Spacer flexible />
-          <TextInput
-            modifiers={[fillMaxWidth(0.5)]}
-            placeholder="Amount"
-            defaultValue={fromCents(transaction.amount)}
-            keyboardType="numeric"
-            onChangeText={(text) =>
-              setTransaction({ ...transaction, amount: toCents(text) })
-            }
-          />
-        </Row>
-        <Row>
+        <OutlinedTextField
+          modifiers={[fillMaxWidth(1)]}
+          keyboardOptions={{
+            keyboardType: "number",
+          }}
+          value={amountState}
+          colors={{
+            focusedIndicatorColor: "#000000",
+            unfocusedIndicatorColor: "#000000",
+            focusedContainerColor: "transparent",
+            unfocusedContainerColor: "transparent",
+            focusedLabelColor: "#000000",
+            unfocusedLabelColor: "#000000",
+          }}
+          onValueChange={(text) =>
+            setTransaction({ ...transaction, amount: toCents(text) })
+          }
+        >
+          <OutlinedTextField.Label>
+            <Text>Amount</Text>
+          </OutlinedTextField.Label>
+        </OutlinedTextField>
+        <OutlinedTextField
+          value={descriptionState}
+          modifiers={[fillMaxWidth(1)]}
+          colors={{
+            focusedIndicatorColor: "#000000",
+            unfocusedIndicatorColor: "#000000",
+            focusedContainerColor: "transparent",
+            unfocusedContainerColor: "transparent",
+            focusedLabelColor: "#000000",
+            unfocusedLabelColor: "#000000",
+          }}
+          onValueChange={(text) =>
+            setTransaction({ ...transaction, description: text })
+          }
+        >
+          <OutlinedTextField.Label>
+            <Text>Description</Text>
+          </OutlinedTextField.Label>
+        </OutlinedTextField>
+        <Row verticalAlignment="center">
           <Text>Category:</Text>
           <Spacer flexible />
           <CatSelectDM
@@ -108,28 +131,7 @@ export default function TransEditBS({
             }
           />
         </Row>
-        <BasicTextField
-          onValueChange={(text) =>
-            setTransaction({ ...transaction, description: text })
-          }
-          cursorColor="#7c3aed"
-          modifiers={[
-            fillMaxWidth(),
-            clip(Shapes.RoundedCorner(12)),
-            background("#e3e2e2ff"),
-            padding(12, 10, 12, 10),
-          ]}
-        >
-          <BasicTextField.DecorationBox>
-            <Box>
-              <BasicTextField.Placeholder>
-                <Text>Description</Text>
-              </BasicTextField.Placeholder>
-              <BasicTextField.InnerTextField />
-            </Box>
-          </BasicTextField.DecorationBox>
-        </BasicTextField>
-        <Row>
+        <Row verticalAlignment="center">
           <Text>Date:</Text>
           <Spacer flexible />
           <OutlinedButton onClick={() => setShowDatePicker(true)}>

@@ -1,22 +1,18 @@
 import { useFinanceStore } from "@/store/useFinanceStore";
-import { Row, ScrollView } from "@expo/ui";
+import { Row, ScrollView, Spacer } from "@expo/ui";
 import {
-  BasicTextField,
-  Box,
   Button,
   Column,
   Icon,
   ModalBottomSheet,
   OutlinedButton,
+  OutlinedTextField,
   Text,
+  useNativeState,
 } from "@expo/ui/jetpack-compose";
 import {
-  background,
-  clip,
   fillMaxWidth,
-  padding,
   paddingAll,
-  Shapes,
   size,
 } from "@expo/ui/jetpack-compose/modifiers";
 import { memo, useState } from "react";
@@ -157,6 +153,7 @@ export default function CatEditBS({
     color: category?.color ?? colors[0],
     icon: category?.icon ?? ICON_NAMES[0],
   });
+  const nameState = useNativeState(category?.name ?? "");
   const [warning, setWarning] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -177,25 +174,22 @@ export default function CatEditBS({
         verticalArrangement={{ spacedBy: 16 }}
         modifiers={[fillMaxWidth(), paddingAll(16)]}
       >
-        <BasicTextField
+        <OutlinedTextField
+          value={nameState}
+          colors={{
+            focusedIndicatorColor: "#000000",
+            unfocusedIndicatorColor: "#000000",
+            focusedContainerColor: "transparent",
+            unfocusedContainerColor: "transparent",
+            focusedLabelColor: "#000000",
+            unfocusedLabelColor: "#000000",
+          }}
           onValueChange={(text) => setCat({ ...Cat, name: text })}
-          cursorColor="#7c3aed"
-          modifiers={[
-            fillMaxWidth(),
-            clip(Shapes.RoundedCorner(12)),
-            background("#e3e2e2ff"),
-            padding(12, 10, 12, 10),
-          ]}
         >
-          <BasicTextField.DecorationBox>
-            <Box>
-              <BasicTextField.Placeholder>
-                <Text>Category Name</Text>
-              </BasicTextField.Placeholder>
-              <BasicTextField.InnerTextField />
-            </Box>
-          </BasicTextField.DecorationBox>
-        </BasicTextField>
+          <OutlinedTextField.Label>
+            <Text>Category Name</Text>
+          </OutlinedTextField.Label>
+        </OutlinedTextField>
         <Text>color:</Text>
         <ColorPicker
           selectedColor={Cat.color}
@@ -208,51 +202,54 @@ export default function CatEditBS({
           onSelect={(iconName) => setCat((c) => ({ ...c, icon: iconName }))}
         />
         {warning ? <Text color="red">{warning}</Text> : null}
-        <Button
-          colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
-          onClick={async () => {
-            const validationWarning = validate();
-            if (validationWarning) {
-              setWarning(validationWarning);
-              return;
-            }
-            setWarning("");
-            setSubmitting(true);
-            try {
-              await useFinanceStore.getState().updateCategory(catId, {
-                name: Cat.name,
-                icon: Cat.icon,
-                color: Cat.color,
-              });
-              setOpen(false);
-            } catch (e) {
-              setWarning(
-                e instanceof Error ? e.message : "Failed to update category",
-              );
-            } finally {
-              setSubmitting(false);
-            }
-          }}
-        >
-          <Text>{submitting ? "Saving..." : "Apply"}</Text>
-        </Button>
-        <Button
-          colors={{ containerColor: "red", contentColor: "#FFFFFF" }}
-          onClick={async () => {
-            try {
-              await useFinanceStore.getState().deleteCategory(catId);
-              setOpen(false);
-            } catch (err) {
-              setWarning(
-                err instanceof Error
-                  ? err.message
-                  : "Failed to delete category",
-              );
-            }
-          }}
-        >
-          <Text>Delete</Text>
-        </Button>
+        <Row>
+          <Button
+            colors={{ containerColor: "red", contentColor: "#FFFFFF" }}
+            onClick={async () => {
+              try {
+                await useFinanceStore.getState().deleteCategory(catId);
+                setOpen(false);
+              } catch (err) {
+                setWarning(
+                  err instanceof Error
+                    ? err.message
+                    : "Failed to delete category",
+                );
+              }
+            }}
+          >
+            <Text>Delete</Text>
+          </Button>
+          <Spacer flexible />
+          <Button
+            colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
+            onClick={async () => {
+              const validationWarning = validate();
+              if (validationWarning) {
+                setWarning(validationWarning);
+                return;
+              }
+              setWarning("");
+              setSubmitting(true);
+              try {
+                await useFinanceStore.getState().updateCategory(catId, {
+                  name: Cat.name,
+                  icon: Cat.icon,
+                  color: Cat.color,
+                });
+                setOpen(false);
+              } catch (e) {
+                setWarning(
+                  e instanceof Error ? e.message : "Failed to update category",
+                );
+              } finally {
+                setSubmitting(false);
+              }
+            }}
+          >
+            <Text>{submitting ? "Saving..." : "Apply"}</Text>
+          </Button>
+        </Row>
       </Column>
     </ModalBottomSheet>
   );
