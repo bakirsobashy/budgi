@@ -68,10 +68,10 @@ const Index = () => {
               onOpenPicker={() => setShowMonthPicker(true)}
             />
             <OutlinedButton>
-              <Text>{`Total: ${total >= 0 ? "+" : "-"}$${Math.abs(total).toFixed(2)}`}</Text>
+              <Text style={{ fontWeight: "bold" }}>{`Total: ${total >= 0 ? "+" : "-"}$${Math.abs(total).toFixed(2)}`}</Text>
             </OutlinedButton>
             <OutlinedButton>
-              <Text>{`Income: +$${income.toFixed(2)} | Expense: -$${expense.toFixed(2)}`}</Text>
+              <Text style={{ fontWeight: "bold" }}>{`Income: +$${income.toFixed(2)} | Expense: -$${expense.toFixed(2)}`}</Text>
             </OutlinedButton>
 
             <Box modifiers={[fillMaxSize()]}>

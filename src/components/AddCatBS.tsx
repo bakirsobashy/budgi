@@ -1,22 +1,17 @@
 import { useFinanceStore } from "@/store/useFinanceStore";
 import { Row, ScrollView } from "@expo/ui";
 import {
-  BasicTextField,
-  Box,
   Button,
   Column,
   Icon,
   ModalBottomSheet,
   OutlinedButton,
+  OutlinedTextField,
   Text,
 } from "@expo/ui/jetpack-compose";
 import {
-  background,
-  clip,
   fillMaxWidth,
-  padding,
   paddingAll,
-  Shapes,
   size,
 } from "@expo/ui/jetpack-compose/modifiers";
 import { memo, useState } from "react";
@@ -180,7 +175,7 @@ export default function AddCatBottomSheet({
         verticalArrangement={{ spacedBy: 16 }}
         modifiers={[fillMaxWidth(), paddingAll(16)]}
       >
-        <BasicTextField
+        {/* <BasicTextField
           onValueChange={(text) => setCat({ ...Cat, name: text })}
           cursorColor="#7c3aed"
           modifiers={[
@@ -198,7 +193,22 @@ export default function AddCatBottomSheet({
               <BasicTextField.InnerTextField />
             </Box>
           </BasicTextField.DecorationBox>
-        </BasicTextField>
+        </BasicTextField> */}
+        <OutlinedTextField
+          colors={{
+            focusedIndicatorColor: "#000000",
+            unfocusedIndicatorColor: "#000000",
+            focusedContainerColor: "transparent",
+            unfocusedContainerColor: "transparent",
+            focusedLabelColor: "#000000",
+            unfocusedLabelColor: "#000000",
+          }}
+          onValueChange={(text) => setCat({ ...Cat, name: text })}
+        >
+          <OutlinedTextField.Label>
+            <Text>Category name</Text>
+          </OutlinedTextField.Label>
+        </OutlinedTextField>
         <Text>color:</Text>
         <ColorPicker
           selectedColor={Cat.color}

@@ -2,10 +2,7 @@ import type { Transaction } from "@/lib/types";
 import { useFinanceStore } from "@/store/useFinanceStore";
 import { BottomSheet } from "@expo/ui";
 import { Column, Row, Text } from "@expo/ui/jetpack-compose";
-import {
-  fillMaxWidth,
-  paddingAll,
-} from "@expo/ui/jetpack-compose/modifiers";
+import { fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
 
 export default function TransDescBS({
   showBottomSheet,
@@ -35,29 +32,37 @@ export default function TransDescBS({
       onDismiss={() => setShowBottomSheet(false)}
     >
       <Column
-        verticalArrangement={{ spacedBy: 12 }}
+        verticalArrangement={{ spacedBy: 18 }}
         modifiers={[fillMaxWidth(), paddingAll(16)]}
       >
         <Row modifiers={[fillMaxWidth()]}>
-          <Text>Amount:</Text>
-          <Text color={type === "income" ? "green" : "red"}>
+          <Text style={{ fontWeight: "bold" }}>Amount: </Text>
+          <Text
+            style={{ fontWeight: "bold" }}
+            color={type === "income" ? "green" : "red"}
+          >
             {`${type === "income" ? "+" : "-"}$${amount.toFixed(2)}`}
           </Text>
         </Row>
         <Row modifiers={[fillMaxWidth()]}>
-          <Text>Category:</Text>
-          <Text color={category?.color || undefined}>
+          <Text style={{ fontWeight: "bold" }}>Category: </Text>
+          <Text
+            style={{ fontWeight: "bold" }}
+            color={category?.color || undefined}
+          >
             {category?.name || "Uncategorized"}
           </Text>
         </Row>
         <Row modifiers={[fillMaxWidth()]}>
-          <Text>Date:</Text>
-          <Text>{date}</Text>
+          <Text style={{ fontWeight: "bold" }}>Date: </Text>
+          <Text style={{ fontWeight: "bold" }}>{date}</Text>
         </Row>
         <Row modifiers={[fillMaxWidth()]}>
-          <Text>Description:</Text>
+          <Text style={{ fontWeight: "bold" }}>Description: </Text>
+          <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+            {description}
+          </Text>
         </Row>
-        <Text>{description}</Text>
       </Column>
     </BottomSheet>
   );

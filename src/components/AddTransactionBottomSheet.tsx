@@ -1,5 +1,5 @@
 import { useFinanceStore } from "@/store/useFinanceStore";
-import { BottomSheet, Spacer, Text, TextInput, useNativeState } from "@expo/ui";
+import { BottomSheet, Spacer, Text } from "@expo/ui";
 import DateTimePickerDefault from "@expo/ui/community/datetime-picker";
 import {
   Button,
@@ -7,6 +7,7 @@ import {
   OutlinedButton,
   OutlinedTextField,
   Row,
+  useNativeState,
 } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
 import { useState } from "react";
@@ -50,9 +51,7 @@ export default function AddTransactionBottomSheet({
 
   const resetForm = () => {
     setTransaction({ ...EMPTY_FORM, date: new Date() });
-    // ObservableState is intentionally mutable shared state.
-    // eslint-disable-next-line react-hooks/immutability
-    amountState.value = "";
+    amountState.set("");
     setError("");
     setShowDatePicker(false);
     setSubmitting(false);
@@ -76,9 +75,6 @@ export default function AddTransactionBottomSheet({
   };
 
   const handleAmountChange = (text: string) => {
-    // ObservableState is intentionally mutable shared state.
-    // eslint-disable-next-line react-hooks/immutability
-    amountState.value = text;
     // Parse the user-entered dollars into integer cents.
     const parsed = text === "" ? 0 : Math.round(Number(text) * 100);
     setTransaction((prev) => ({
@@ -99,17 +95,42 @@ export default function AddTransactionBottomSheet({
         verticalArrangement={{ spacedBy: 16 }}
         modifiers={[fillMaxWidth(), paddingAll(16)]}
       >
-        <Row modifiers={[fillMaxWidth()]}>
-          <Text>Amount:</Text>
-          <Spacer flexible />
-          <TextInput
-            modifiers={[fillMaxWidth(0.5)]}
-            placeholder="Amount"
-            value={amountState}
-            keyboardType="numeric"
-            onChangeText={handleAmountChange}
-          />
-        </Row>
+        <OutlinedTextField
+          keyboardOptions={{
+            keyboardType: "number",
+          }}
+          value={amountState}
+          colors={{
+            focusedIndicatorColor: "#000000",
+            unfocusedIndicatorColor: "#000000",
+            focusedContainerColor: "transparent",
+            unfocusedContainerColor: "transparent",
+            focusedLabelColor: "#000000",
+            unfocusedLabelColor: "#000000",
+          }}
+          onValueChange={handleAmountChange}
+        >
+          <OutlinedTextField.Label>
+            <Text>Amount</Text>
+          </OutlinedTextField.Label>
+        </OutlinedTextField>
+        <OutlinedTextField
+          colors={{
+            focusedIndicatorColor: "#000000",
+            unfocusedIndicatorColor: "#000000",
+            focusedContainerColor: "transparent",
+            unfocusedContainerColor: "transparent",
+            focusedLabelColor: "#000000",
+            unfocusedLabelColor: "#000000",
+          }}
+          onValueChange={(text) =>
+            setTransaction({ ...transaction, description: text })
+          }
+        >
+          <OutlinedTextField.Label>
+            <Text>Description</Text>
+          </OutlinedTextField.Label>
+        </OutlinedTextField>
         <Row>
           <Text>Category:</Text>
           <Spacer flexible />
@@ -141,23 +162,6 @@ export default function AddTransactionBottomSheet({
             />
           )}
         </Row>
-        <OutlinedTextField
-          colors={{
-            focusedIndicatorColor: "#000000",
-            unfocusedIndicatorColor: "#000000",
-            focusedContainerColor: "transparent",
-            unfocusedContainerColor: "transparent",
-            focusedLabelColor: "#000000",
-            unfocusedLabelColor: "#000000",
-          }}
-          onValueChange={(text) =>
-            setTransaction({ ...transaction, description: text })
-          }
-        >
-          <OutlinedTextField.Label>
-            <Text>Description</Text>
-          </OutlinedTextField.Label>
-        </OutlinedTextField>
         {error ? <Text textStyle={{ color: "red" }}>{error}</Text> : null}
         <Button
           colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
@@ -178,9 +182,7 @@ export default function AddTransactionBottomSheet({
                 description: transaction.description,
               });
               setTransaction({ ...EMPTY_FORM, date: new Date() });
-              // ObservableState is intentionally mutable shared state.
-              // eslint-disable-next-line react-hooks/immutability
-              amountState.value = "";
+              amountState.set("");
               setShowAddButtomSheet(false);
               setShowDatePicker(false);
             } catch (e) {

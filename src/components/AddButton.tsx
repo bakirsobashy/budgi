@@ -10,7 +10,7 @@ import { useState } from "react";
 
 const FAB_ICON = { uri: "ic_add" };
 const INCOME_ICON = { uri: "ic_money" };
-const EXPENSE_ICON = { uri: "ic_local_shipping" };
+const EXPENSE_ICON = { uri: "ic_remove" };
 
 export default function AddButton({
   onClick,
@@ -45,7 +45,7 @@ export default function AddButton({
           }}
         >
           <DropdownMenuItem.LeadingIcon>
-            <Icon source={INCOME_ICON} tint={"#FFFFFF"} />
+            <Icon source={FAB_ICON} tint={"#FFFFFF"} />
           </DropdownMenuItem.LeadingIcon>
           <DropdownMenuItem.Text>
             <Text color="white">Income</Text>

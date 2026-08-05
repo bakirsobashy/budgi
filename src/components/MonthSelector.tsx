@@ -149,7 +149,7 @@ export default function MonthSelector({
       </SegmentedButton>
       <SegmentedButton onClick={onOpenPicker}>
         <SegmentedButton.Label>
-          <Text>
+          <Text style={{ fontWeight: "bold" }}>
             {(() => {
               const month = selectedMonth.toLocaleDateString(undefined, {
                 month: "short",

@@ -38,7 +38,7 @@ export default function CatCard({
         tint={color}
       />
       <Spacer size={8} />
-      <Text textStyle={color ? { color } : undefined}>{name}</Text>
+      <Text textStyle={color ? { color, fontWeight: "bold" } : { fontWeight: "bold" }}>{name}</Text>
       <Spacer flexible />
       <OutlinedButton
         modifiers={[size(30, 30), offset(10, 0)]}

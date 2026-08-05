@@ -1,9 +1,6 @@
 import { getIconSource } from "@/lib/icons";
 import { Spacer, Text } from "@expo/ui";
-import {
-  Icon,
-  OutlinedButton,
-} from "@expo/ui/jetpack-compose";
+import { Icon, OutlinedButton } from "@expo/ui/jetpack-compose";
 import {
   fillMaxWidth,
   height,
@@ -32,10 +29,7 @@ export default function TransactionCard({
 }) {
   const displayAmount = amount ?? 0;
   return (
-    <OutlinedButton
-      modifiers={[fillMaxWidth(1), height(50)]}
-      onClick={onPress}
-    >
+    <OutlinedButton modifiers={[fillMaxWidth(1), height(50)]} onClick={onPress}>
       {icon ? (
         <Icon
           source={getIconSource(icon || "")}
@@ -46,12 +40,12 @@ export default function TransactionCard({
         <Spacer size={24} />
       )}
       <Spacer size={8} />
-      <Text textStyle={color ? { color: color } : undefined}>
+      <Text textStyle={color ? { color: color, fontWeight: "bold" } : { fontWeight: "bold" }}>
         {category || "Uncategorized"}
       </Text>
       <Spacer flexible />
       <Text
-        textStyle={type === "income" ? { color: "green" } : { color: "red" }}
+        textStyle={type === "income" ? { color: "green", fontWeight: "bold" } : { color: "red", fontWeight: "bold" }}
       >
         {`${type === "income" ? "+" : "-"}$${displayAmount.toFixed(2)}`}
       </Text>
