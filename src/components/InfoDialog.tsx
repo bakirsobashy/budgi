@@ -46,9 +46,10 @@ export default function InfoDialog({
           </Text>
           <Text>Version: 1.0.0</Text>
           <Text>Developer: bakirsobashy</Text>
-          <Text>
-            Features: income/expense tracking, categories, monthly budgets.
-          </Text>
+          <Text>Contact:</Text>
+          <Text> GitHub: github.com/bakirsobashy/</Text>
+          <Text> Email: bakir1998bt.bk@gmail.com</Text>
+          <Text> Phone: +964 7727519662</Text>
           <Spacer modifiers={[height(12)]} />
           <Text>
             If you find this app useful, consider supporting the developer.
