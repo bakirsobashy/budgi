@@ -11,7 +11,10 @@ import {
   Box,
   Column,
   Host,
+  Icon,
+  IconButton,
   OutlinedButton,
+  Row,
   Text,
 } from "@expo/ui/jetpack-compose";
 import {
@@ -36,6 +39,7 @@ const Index = () => {
   // Lifted state for Month Picker
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [showMonthPicker, setShowMonthPicker] = useState(false);
+  const [showAboutSheet, setShowAboutSheet] = useState(false);
 
   const monthTxs = transactions.filter(
     (tx) =>
@@ -54,18 +58,37 @@ const Index = () => {
   const expense = expenseCents / 100;
   const total = totalCents / 100;
 
+  const INFO_ICON = { uri: "ic_info" };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.inner}>
         <Host style={styles.host}>
+          <View style={styles.aboutButton} pointerEvents="box-none"></View>
           <Column modifiers={[fillMaxSize()]} horizontalAlignment="center">
             <Spacer size={16} />
-
-            <MonthSelector
-              selectedMonth={selectedMonth}
-              onMonthChange={(date) => setSelectedMonth(date)}
-              onOpenPicker={() => setShowMonthPicker(true)}
-            />
+            <Box>
+              <IconButton
+                onClick={() => setShowAboutSheet(true)}
+                colors={{
+                  containerColor: "#000000",
+                  contentColor: "#FFFFFF",
+                }}
+              >
+                <Icon source={INFO_ICON} size={24} tint={"white"} />
+              </IconButton>
+              <Row
+                horizontalArrangement="center"
+                verticalAlignment="center"
+                modifiers={[fillMaxWidth()]}
+              >
+                <MonthSelector
+                  selectedMonth={selectedMonth}
+                  onMonthChange={(date) => setSelectedMonth(date)}
+                  onOpenPicker={() => setShowMonthPicker(true)}
+                />
+              </Row>
+            </Box>
             <OutlinedButton>
               <Text
                 style={{ fontWeight: "bold" }}
@@ -219,6 +242,12 @@ const styles = StyleSheet.create({
   host: {
     flex: 1,
     width: "100%",
+  },
+  aboutButton: {
+    position: "absolute",
+    top: 8,
+    left: 8,
+    zIndex: 10,
   },
 });
 

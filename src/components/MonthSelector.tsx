@@ -151,13 +151,13 @@ export default function MonthSelector({
         <SegmentedButton.Label>
           <Text style={{ fontWeight: "bold" }}>
             {(() => {
-              const month = selectedMonth.toLocaleDateString(undefined, {
-                month: "short",
-              });
               const year = selectedMonth.toLocaleDateString(undefined, {
                 year: "2-digit",
               });
-              return `${month} ${year}`;
+              const month = selectedMonth.toLocaleDateString(undefined, {
+                month: "short",
+              });
+              return `${year}/${month}`;
             })()}
           </Text>
         </SegmentedButton.Label>
