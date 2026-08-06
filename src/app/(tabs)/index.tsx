@@ -1,5 +1,6 @@
 import AddButton from "@/components/AddButton";
 import AddTransactionBottomSheet from "@/components/AddTransactionBottomSheet";
+import InfoDialog from "@/components/InfoDialog";
 import MonthSelector, { JSMonthPicker } from "@/components/MonthSelector";
 import TransactionCard from "@/components/TransactionCard";
 import TransDescBS from "@/components/TransDescBS";
@@ -71,12 +72,14 @@ const Index = () => {
               <IconButton
                 onClick={() => setShowAboutSheet(true)}
                 colors={{
-                  containerColor: "#000000",
-                  contentColor: "#FFFFFF",
+                  containerColor: "transparent",
                 }}
               >
-                <Icon source={INFO_ICON} size={24} tint={"white"} />
+                <Icon source={INFO_ICON} size={24} tint={"black"} />
               </IconButton>
+              {showAboutSheet && (
+                <InfoDialog setShowAboutSheet={setShowAboutSheet}></InfoDialog>
+              )}
               <Row
                 horizontalArrangement="center"
                 verticalAlignment="center"
