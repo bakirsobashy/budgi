@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "finance-tracker",
+    "name": "Budgi",
     "slug": "finance-tracker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/Icons/main.png",
-    "scheme": "financetracker",
+    "scheme": "Budgi",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.anonymous.financetracker",
+      "bundleIdentifier": "com.sobashy.Budgi",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -21,7 +21,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.financetracker"
+      "package": "com.sobashy.Budgi"
     },
     "web": {
       "output": "static",
