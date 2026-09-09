@@ -49,13 +49,23 @@ export default function AddTransactionBottomSheet({
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const resetForm = () => {
-    setTransaction({ ...EMPTY_FORM, date: new Date() });
-    amountState.set("");
-    setError("");
-    setShowDatePicker(false);
-    setSubmitting(false);
-  };
+  // const resetForm = useCallback(() => {
+  //   setTransaction({ ...EMPTY_FORM, date: new Date() });
+  //   amountState.set("");
+  //   setError("");
+  //   setShowDatePicker(false);
+  //   setSubmitting(false);
+  // }, [amountState]);
+
+  // Reset the form when the sheet opens, not while it is closing. Updating the
+  // native text-field state during the dismiss animation can race with the
+  // ModalBottomSheet's RNHostView teardown and trigger the "child already has a
+  // parent" crash.
+  // useEffect(() => {
+  //   if (showAddButtomSheet) {
+  //     resetForm();
+  //   }
+  // }, [showAddButtomSheet, resetForm]);
 
   const categories = useFinanceStore((state) => state.categories).filter(
     (c) => c.type === type,
@@ -88,7 +98,6 @@ export default function AddTransactionBottomSheet({
       isPresented={showAddButtomSheet}
       onDismiss={() => {
         setShowAddButtomSheet(false);
-        resetForm();
       }}
     >
       <Column
@@ -181,8 +190,6 @@ export default function AddTransactionBottomSheet({
                 categoryId: transaction.categoryId,
                 description: transaction.description,
               });
-              setTransaction({ ...EMPTY_FORM, date: new Date() });
-              amountState.set("");
               setShowAddButtomSheet(false);
               setShowDatePicker(false);
             } catch (e) {

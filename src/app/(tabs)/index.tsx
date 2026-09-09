@@ -65,7 +65,6 @@ const Index = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.inner}>
         <Host style={styles.host}>
-          <View style={styles.aboutButton} pointerEvents="box-none"></View>
           <Column modifiers={[fillMaxSize()]} horizontalAlignment="center">
             <Spacer size={16} />
             <Box>
@@ -77,9 +76,6 @@ const Index = () => {
               >
                 <Icon source={INFO_ICON} size={24} tint={"black"} />
               </IconButton>
-              {showAboutSheet && (
-                <InfoDialog setShowAboutSheet={setShowAboutSheet}></InfoDialog>
-              )}
               <Row
                 horizontalArrangement="center"
                 verticalAlignment="center"
@@ -176,24 +172,27 @@ const Index = () => {
               />
             </Box>
           </Column>
-
-          <AddTransactionBottomSheet
-            showAddButtomSheet={showAddButtomSheet}
-            setShowAddButtomSheet={setShowAddButtomSheet}
-            type={type}
-          />
-          <TransDescBS
-            showBottomSheet={showDescButtomSheet}
-            setShowBottomSheet={setShowDescButtomSheet}
-            selectedTransaction={selectedTransaction}
-          />
-          <TransEditBS
-            key={selectedTransaction?.id ?? "new"}
-            showBottomSheet={showEditButtomSheet}
-            setShowBottomSheet={setShowEditButtomSheet}
-            selectedTransaction={selectedTransaction}
-          />
         </Host>
+
+        <AddTransactionBottomSheet
+          showAddButtomSheet={showAddButtomSheet}
+          setShowAddButtomSheet={setShowAddButtomSheet}
+          type={type}
+        />
+        <TransDescBS
+          showBottomSheet={showDescButtomSheet}
+          setShowBottomSheet={setShowDescButtomSheet}
+          selectedTransaction={selectedTransaction}
+        />
+        <TransEditBS
+          key={selectedTransaction?.id ?? "new"}
+          showBottomSheet={showEditButtomSheet}
+          setShowBottomSheet={setShowEditButtomSheet}
+          selectedTransaction={selectedTransaction}
+        />
+        {showAboutSheet && (
+          <InfoDialog setShowAboutSheet={setShowAboutSheet} />
+        )}
       </View>
 
       {Platform.OS === "web" ? (
@@ -245,12 +244,6 @@ const styles = StyleSheet.create({
   host: {
     flex: 1,
     width: "100%",
-  },
-  aboutButton: {
-    position: "absolute",
-    top: 8,
-    left: 8,
-    zIndex: 10,
   },
 });
 

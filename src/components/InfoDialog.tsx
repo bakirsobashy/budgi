@@ -5,10 +5,8 @@ import {
   Column,
   Spacer,
   Surface,
-  TextButton,
 } from "@expo/ui/jetpack-compose";
 import {
-  align,
   clip,
   height,
   padding,
@@ -20,6 +18,8 @@ import { Linking } from "react-native";
 
 const DONATE_URL =
   "https://checkout.rasedi.com/pay/test/d80c7a23-02d1-42e9-a114-0b0276830097";
+const PRIVACY_POLICY_URL =
+  "https://github.com/bakirsobashy/budgi/blob/master/docs/privacy-policy.md";
 
 export default function InfoDialog({
   setShowAboutSheet,
@@ -60,13 +60,12 @@ export default function InfoDialog({
             <Text>Donate</Text>
           </Button>
           <Spacer modifiers={[height(12)]} />
-          <TextButton
+          <Button
             colors={{ containerColor: "black", contentColor: "#FFFFFF" }}
-            onClick={() => setShowAboutSheet(false)}
-            modifiers={[align("centerEnd")]}
+            onClick={() => Linking.openURL(PRIVACY_POLICY_URL)}
           >
-            <Text>Confirm</Text>
-          </TextButton>
+            <Text>Privacy Policy</Text>
+          </Button>
         </Column>
       </Surface>
     </BasicAlertDialog>
