@@ -37,9 +37,7 @@ export default function InfoDialog({
         ]}
       >
         <Column modifiers={[padding(16, 16, 16, 16)]}>
-          <Text textStyle={{ fontWeight: "bold", fontSize: 18 }}>
-            finance-tracker
-          </Text>
+          <Text textStyle={{ fontWeight: "bold", fontSize: 18 }}>Budgi</Text>
           <Text>
             A personal finance app to track income, expenses, categories, and
             monthly budgets.

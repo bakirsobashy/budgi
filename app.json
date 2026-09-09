@@ -14,25 +14,19 @@
       }
     },
     "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
-      },
+      "icon": "./assets/Icons/main.png",
       "predictiveBackGestureEnabled": false,
       "package": "com.sobashy.Budgi"
     },
     "web": {
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "output": "static"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/Icons/main.png",
           "imageWidth": 76,
           "backgroundColor": "#FFFFFF",
           "dark": {
@@ -41,7 +35,8 @@
         }
       ],
       "expo-sqlite",
-      "expo-image"
+      "expo-image",
+      "./plugins/withMaterialSymbols"
     ],
     "experiments": {
       "typedRoutes": true,

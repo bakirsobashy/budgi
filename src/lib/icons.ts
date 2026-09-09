@@ -9,6 +9,9 @@
 // via ResourceIdHelper.getResourceUri -> android.resource://<pkg>/drawable/ic_<name>.
 
 export type IconName =
+  | "add"
+  | "edit"
+  | "remove"
   | "info"
   | "directions_car"
   | "flight"
@@ -62,6 +65,9 @@ export type IconName =
   | "check";
 
 const ICON_NAMES: IconName[] = [
+  "add",
+  "edit",
+  "remove",
   "info",
   "directions_car",
   "flight",
@@ -117,6 +123,9 @@ const ICON_NAMES: IconName[] = [
 
 // Map of icon name -> native drawable resource name (ic_<name>).
 const ICON_NAME_TO_DRAWABLE: Record<IconName, string> = {
+  add: "ic_add",
+  edit: "ic_edit",
+  remove: "ic_remove",
   info: "ic_info",
   directions_car: "ic_directions_car",
   flight: "ic_flight",
