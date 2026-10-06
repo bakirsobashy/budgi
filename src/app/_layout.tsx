@@ -10,6 +10,8 @@ import { db } from "../db/client";
 import { seedCategories } from "../db/seed";
 import migrations from "../drizzle/migrations";
 import { useFinanceStore } from "../store/useFinanceStore";
+import { useSettingsStore } from "../store/useSettingsStore";
+import { ThemeProvider } from "../theme/useTheme";
 
 // Keep the native splash (white screen) visible while we render our own
 // white React view with the animated GIF centered, so the transition from
@@ -27,17 +29,19 @@ export default function RootLayout() {
   const [seedError, setSeedError] = useState<Error | null>(null);
   const hydrate = useFinanceStore((s) => s.hydrate);
   const isHydrated = useFinanceStore((s) => s.isHydrated);
+  const hydrateSettings = useSettingsStore((s) => s.hydrate);
+  const isSettingsHydrated = useSettingsStore((s) => s.isHydrated);
 
   useEffect(() => {
     if (success) {
       seedCategories()
-        .then(() => hydrate())
+        .then(() => Promise.all([hydrate(), hydrateSettings()]))
         .catch((err) => {
           console.error("Failed to seed or hydrate store:", err);
           setSeedError(err instanceof Error ? err : new Error(String(err)));
         });
     }
-  }, [success, hydrate]);
+  }, [success, hydrate, hydrateSettings]);
 
   // The native splash and the React splash below are both a white background,
   // so we can hide the native splash as soon as React has mounted — the user
@@ -51,8 +55,8 @@ export default function RootLayout() {
   if (seedError) return <Text>Setup error: {seedError.message}</Text>;
 
   // Show the React splash (white screen + centered animated GIF) until the
-  // DB is migrated, seeded, and the store is hydrated.
-  if (!success || !isHydrated) {
+  // DB is migrated, seeded, and both stores are hydrated.
+  if (!success || !isHydrated || !isSettingsHydrated) {
     return (
       <View style={styles.splash}>
         <Image
@@ -65,7 +69,7 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <ThemeProvider>
       <StatusBar style="dark" />
       <Stack>
         <Stack.Screen
@@ -75,7 +79,7 @@ export default function RootLayout() {
           }}
         />
       </Stack>
-    </>
+    </ThemeProvider>
   );
 }
 
