@@ -2,7 +2,7 @@
 
 **Last updated:** September 9, 2026
 
-This Privacy Policy explains how your personal information is handled when you use the Finance Tracker mobile application ("the App").
+This Privacy Policy explains how your personal information is handled when you use the Finance Tracker mobile application ("Budgi").
 
 ## Data controller
 
