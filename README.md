@@ -1,56 +1,86 @@
-# Welcome to your Expo app 👋
+<p align="center"><img src="assets/Icons/main.png" width="96" alt="Budgi app icon"></p>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# Budgi
 
-## Get started
+An offline-first personal finance app for Android. Track income and expenses by category, set a budget for each month and for each category, and watch the budget bars go from green to red as you spend. Everything stays on your phone: no account, no network, no tracking.
 
-1. Install dependencies
+**[Get Budgi on Google Play](https://play.google.com/store/apps/details?id=com.sobashy.Budgi)**
 
-   ```bash
-   npm install
-   ```
+## Features
 
-2. Start the app
+- **Transactions:** income and expenses, each with a category, a date and an optional note.
+- **Monthly summary:** the dashboard shows the month's income, expenses and balance.
+- **Categories:** each has its own icon and color. A category that has transactions can't be deleted by accident.
+- **Budgets:** a total budget for each month, plus a budget for each category. One tap copies last month's budgets into a new month.
+- **Budget bars:** they change color at 20%, 40%, 60% and 80% of the budget, from green to red.
+- **History:** a month selector to move between months.
+- **Private by design:** all data lives in a SQLite database on the device. See the [privacy policy](docs/privacy-policy.md).
 
-   ```bash
-   npx expo start
-   ```
+## How it's built
 
-In the output, you'll find options to open the app in a
+- **App:** React Native 0.85 and Expo SDK 56, in TypeScript. Expo Router handles navigation with typed routes, and the React Compiler is on.
+- **Native Android UI:** screens are built from Jetpack Compose components through [Expo UI](https://docs.expo.dev/versions/v56.0.0/sdk/ui/) (`@expo/ui/jetpack-compose`). Dialogs, buttons and sheets are real Material components, not JavaScript imitations. A config plugin, `plugins/withMaterialSymbols.js`, copies the Material Symbols icons the app uses into the Android project as native drawables.
+- **Data:** SQLite on the device through `expo-sqlite` and Drizzle ORM. drizzle-kit generates the SQL migrations, and the app applies them at startup, behind the splash screen, before the first screen appears. A fresh install gets two starter categories.
+- **Money:** amounts are stored as whole cents, so totals never pick up floating-point errors.
+- **State:** a Zustand store loads everything from SQLite once at startup. Every change updates the screen first, then writes to SQLite, and rolls the screen back if the write fails.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```mermaid
+flowchart TD
+    UI["Screens: Dashboard, Categories, Budget<br/>Jetpack Compose components through Expo UI"]
+    Store["Zustand store<br/>updates the screen first, rolls back if a write fails"]
+    DB[("SQLite on the device<br/>finance.db, through Drizzle ORM")]
+    UI -- "add, edit, delete" --> Store
+    Store -- "new state" --> UI
+    Store <-- "reads at startup, writes on every change" --> DB
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Data model
 
-### Other setup steps
+| Table              | What it holds                                                                    |
+| ------------------ | -------------------------------------------------------------------------------- |
+| `categories`       | A unique name, income or expense, an icon and a color                            |
+| `transactions`     | An amount in cents, income or expense, a date (`YYYY-MM-DD`), a category, a note |
+| `monthly_budgets`  | One total per month (`YYYY-MM`), in cents                                        |
+| `category_budgets` | One amount per month and category (each pair at most once), in cents             |
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+### Project structure
 
-## Learn more
+```text
+src/
+  app/          screens, with Expo Router: the tab bar, Dashboard, Categories, Budget
+  components/   cards, bottom sheets, dialogs, the month selector, budget bars
+  db/           Drizzle schema, the SQLite client, first-run seed
+  drizzle/      generated SQL migrations
+  store/        the Zustand store
+  lib/          shared types, the icon list, budget bar colors
+plugins/        the Expo config plugin for Material Symbols icons
+docs/           privacy policy
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## Run it locally
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+You need Node.js and an Android phone or emulator. Budgi changes the native Android project (the icon plugin) and uses native modules, so it runs as a development build, not in Expo Go.
 
-## Join the community
+```sh
+npm install
+npx expo run:android   # builds and installs a development build
+```
 
-Join our community of developers creating universal apps.
+After the first build, `npx expo start` is enough to work on the JavaScript.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+To change the database, edit `src/db/schema.ts`, then run `npm run db:generate`. drizzle-kit writes a new migration to `src/drizzle/`, and the app applies it the next time it starts.
+
+## Release builds
+
+[EAS](https://docs.expo.dev/build/introduction/) builds and submits the app, with the profiles in `eas.json`:
+
+| Profile       | What it builds                                                                   |
+| ------------- | -------------------------------------------------------------------------------- |
+| `development` | A development build for testing on devices                                       |
+| `preview`     | An installable build to share for testing                                        |
+| `production`  | An Android App Bundle for Google Play; the version number goes up on every build |
+
+```sh
+eas build --platform android --profile production
+eas submit --platform android   # uploads to the Play Store's internal testing track
+```
