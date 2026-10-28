@@ -1,5 +1,3 @@
-<p align="center"><img src="assets/Icons/main.png" width="96" alt="Budgi app icon"></p>
-
 # Budgi
 
 An offline-first personal finance app for Android. Track income and expenses by category, set a budget for each month and for each category, and watch the budget bars go from green to red as you spend. Everything stays on your phone: no account, no network, no tracking.
